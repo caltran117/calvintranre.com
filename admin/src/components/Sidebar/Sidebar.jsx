@@ -148,7 +148,7 @@ const Sidebar = ({ user, onLogout }) => {
                         className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200 ${
                           item.active 
                             ? "bg-white text-blue-800 shadow-sm" 
-                            : "text-blue-100 hover:text-white"
+                            : "text-blue-200 hover:text-white"
                         }`}
                         onClick={() => handleNavigation(item.href)}
                       >
