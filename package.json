@@ -1,0 +1,23 @@
+{
+  "name": "calvin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run ci:all && concurrently -n SERVER,CLIENT,ADMIN -c green,cyan,magenta \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:admin\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev:admin": "cd admin && npm run dev",
+    "ci:all": "npm run ci:client && npm run ci:server && npm run ci:admin",
+    "ci:client": "cd client && npm ci",
+    "ci:server": "cd server && npm ci",
+    "ci:admin": "cd admin && npm ci"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

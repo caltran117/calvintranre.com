@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+.main-content {
+  padding-top: 4rem; 
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding-top: 0;
+    margin-left: 16rem; 
+  }
+}
