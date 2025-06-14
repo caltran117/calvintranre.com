@@ -40,9 +40,9 @@ const Navbar = () => {
               <Link to="/team" className="text-gray-800 hover:text-gray-600 px-3 py-2 text-sm font-medium">
                 TEAM
               </Link>
-              <Link to="/press" className="text-gray-800 hover:text-gray-600 px-3 py-2 text-sm font-medium">
+              {/* <Link to="/press" className="text-gray-800 hover:text-gray-600 px-3 py-2 text-sm font-medium">
                 PRESS
-              </Link>
+              </Link> */}
               <Link to="/contact" className="text-gray-800 hover:text-gray-600 px-3 py-2 text-sm font-medium">
                 CONTACT
               </Link>
