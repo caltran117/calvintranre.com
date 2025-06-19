@@ -1,0 +1,84 @@
+@baseUrl = http://localhost:5000/v1
+@contentType = application/json
+
+# Replace with actual locationStatId after creating a new location stat
+@locationStatId = 6851c7d39d2e3d95b39fce7b
+
+###
+# Check LocationStat Service
+GET {{baseUrl}}/location-stat/self
+Content-Type: {{contentType}}
+
+###
+# Get All Location Stats
+GET {{baseUrl}}/location-stat
+Content-Type: {{contentType}}
+
+###
+# Add New Location Stat
+POST {{baseUrl}}/location-stat
+Content-Type: {{contentType}}
+
+{
+  "lat": 40.7128,
+  "lon": -74.0060
+}
+
+###
+# Add Another Location Stat (San Francisco)
+POST {{baseUrl}}/location-stat
+Content-Type: {{contentType}}
+
+{
+  "lat": 37.7749,
+  "lon": -122.4194
+}
+
+###
+# Get Location Stat by ID (replace with actual ID)
+GET {{baseUrl}}/location-stat/{{locationStatId}}
+Content-Type: {{contentType}}
+
+###
+# Update Location Stat by ID (replace with actual ID)
+PUT {{baseUrl}}/location-stat/{{locationStatId}}
+Content-Type: {{contentType}}
+
+{
+  "lat": 34.0522,
+  "lon": -118.2437
+}
+
+###
+# Delete Location Stat by ID (replace with actual ID)
+DELETE {{baseUrl}}/location-stat/{{locationStatId}}
+Content-Type: {{contentType}}
+
+###
+# Test Invalid Data - Latitude out of range
+POST {{baseUrl}}/location-stat
+Content-Type: {{contentType}}
+
+{
+  "lat": 100,
+  "lon": -74.0060
+}
+
+###
+# Test Invalid Data - Longitude out of range
+POST {{baseUrl}}/location-stat
+Content-Type: {{contentType}}
+
+{
+  "lat": 40.7128,
+  "lon": 200
+}
+
+###
+# Test Invalid Data - Missing fields
+POST {{baseUrl}}/location-stat
+Content-Type: {{contentType}}
+
+{
+  "lat": 40.7128
+}
