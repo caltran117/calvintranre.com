@@ -1,0 +1,193 @@
+@baseUrl = http://localhost:4000/v1
+@contentType = application/json
+@accessToken = 
+
+# Replace with actual subscriber ID after creating resources
+@subscriberId = 507f1f77bcf86cd799439013
+
+###
+# Check Newsletter Service
+GET {{baseUrl}}/newsletter/self
+Content-Type: {{contentType}}
+
+###
+# Subscribe to Newsletter - New Subscriber
+POST {{baseUrl}}/newsletter/subscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "john.doe@example.com",
+  "consent": true
+}
+
+###
+# Subscribe to Newsletter - Another Subscriber
+POST {{baseUrl}}/newsletter/subscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "jane.smith@example.com",
+  "consent": true
+}
+
+###
+# Subscribe to Newsletter - Marketing Team
+POST {{baseUrl}}/newsletter/subscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "marketing@company.com",
+  "consent": true
+}
+
+###
+# Unsubscribe from Newsletter
+POST {{baseUrl}}/newsletter/unsubscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "john.doe@example.com"
+}
+
+###
+# Get Subscription Status
+GET {{baseUrl}}/newsletter/status/jane.smith@example.com
+Content-Type: {{contentType}}
+
+###
+# Update Newsletter Preferences
+PUT {{baseUrl}}/newsletter/preferences/jane.smith@example.com
+Content-Type: {{contentType}}
+
+{
+  "consent": true,
+  "isSubscribed": true
+}
+
+###
+# Admin: Get All Subscribers with Pagination (requires admin authentication)
+GET {{baseUrl}}/newsletter/admin/subscribers?page=1&limit=10
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Admin: Get Subscribers with Filters
+GET {{baseUrl}}/newsletter/admin/subscribers?page=1&limit=5&isSubscribed=true&consent=true&sortBy=subscribedAt&sortOrder=desc
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Admin: Get Subscriber by ID
+GET {{baseUrl}}/newsletter/admin/subscribers/{{subscriberId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Admin: Update Subscriber
+PUT {{baseUrl}}/newsletter/admin/subscribers/{{subscriberId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "consent": false,
+  "isSubscribed": false,
+  "numberOfEmails": 5
+}
+
+###
+# Admin: Delete Subscriber
+DELETE {{baseUrl}}/newsletter/admin/subscribers/{{subscriberId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Admin: Send Bulk Email
+POST {{baseUrl}}/newsletter/admin/send-bulk
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "subject": "Monthly Newsletter - Tech Updates",
+  "content": "Hello! Here are this month's tech updates and news...",
+  "onlySubscribed": true,
+  "onlyConsented": true
+}
+
+###
+# Admin: Get Newsletter Statistics
+GET {{baseUrl}}/newsletter/admin/stats
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Test Invalid Email Format
+POST {{baseUrl}}/newsletter/subscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "invalid-email",
+  "consent": true
+}
+
+###
+# Test Missing Consent
+POST {{baseUrl}}/newsletter/subscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com"
+}
+
+###
+# Test Consent Denial
+POST {{baseUrl}}/newsletter/subscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "consent": false
+}
+
+###
+# Test Already Subscribed
+POST {{baseUrl}}/newsletter/subscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "jane.smith@example.com",
+  "consent": true
+}
+
+###
+# Test Unsubscribe Non-existent Email
+POST {{baseUrl}}/newsletter/unsubscribe
+Content-Type: {{contentType}}
+
+{
+  "email": "nonexistent@example.com"
+}
+
+###
+# Test Update Preferences - Invalid Combination
+PUT {{baseUrl}}/newsletter/preferences/jane.smith@example.com
+Content-Type: {{contentType}}
+
+{
+  "consent": false,
+  "isSubscribed": true
+}
+
+###
+# Test Admin Route Without Authentication
+GET {{baseUrl}}/newsletter/admin/subscribers
+Content-Type: {{contentType}}
+
+###
+# Test Bulk Email Without Admin Rights
+POST {{baseUrl}}/newsletter/admin/send-bulk
+Content-Type: {{contentType}}
+
+{
+  "subject": "Test Email",
+  "content": "Test content"
+}

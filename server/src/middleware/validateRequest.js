@@ -35,7 +35,10 @@ export const validateRequest = (schema, target = 'body') => {
         
         switch (target) {
             case 'query':
-                req.query = result.data;
+                // Don't reassign req.query directly, instead update individual properties
+                Object.keys(result.data).forEach(key => {
+                    req.query[key] = result.data[key];
+                });
                 break;
             case 'params':
                 req.params = result.data;

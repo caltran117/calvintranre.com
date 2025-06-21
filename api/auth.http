@@ -1,0 +1,187 @@
+@baseUrl = http://localhost:4000/v1
+@contentType = application/json
+@accessToken = 
+
+# Replace with actual user ID and property ID after creating resources
+@userId = 685692f421734694e8d052e5
+@propertyId = 507f1f77bcf86cd799439012
+
+###
+# Check Authentication Service
+GET {{baseUrl}}/auth/self
+Content-Type: {{contentType}}
+
+###
+# Sign In - New User
+POST {{baseUrl}}/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "email": "john.doe@example.com"
+}
+
+###
+# Sign In - Admin User (copy accessToken from response to @accessToken variable)
+POST {{baseUrl}}/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@gmail.com",
+  "role": "admin",
+  "password": "admin123"
+}
+
+###
+# Sign In - Existing User
+POST {{baseUrl}}/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "email": "jane.smith@example.com"
+}
+
+###
+# Get User Profile (requires authentication)
+GET {{baseUrl}}/auth/profile
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Update User Profile (requires authentication)
+PUT {{baseUrl}}/auth/profile
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "email": "updateds.email@example.com",
+  "isActive": true
+}
+
+###
+# Add Favorite Property (requires authentication)
+POST {{baseUrl}}/auth/favorite
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "propertyId": "{{propertyId}}"
+}
+
+###
+# Remove Favorite Property (requires authentication)
+DELETE {{baseUrl}}/auth/favorite
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "propertyId": "{{propertyId}}"
+}
+
+###
+# Admin: Get All Users with Pagination (requires admin authentication)
+GET {{baseUrl}}/auth/admin/users?page=1&limit=10
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Admin: Get All Users with Filters (requires admin authentication)
+GET {{baseUrl}}/auth/admin/users?page=1&limit=5&role=user&isActive=true
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Admin: Get User by ID (requires admin authentication)
+GET {{baseUrl}}/auth/admin/users/{{userId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Admin: Update User (requires admin authentication)
+PUT {{baseUrl}}/auth/admin/users/{{userId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "role": "admin",
+  "isActive": false
+}
+
+###
+# Admin: Delete User (requires admin authentication)
+DELETE {{baseUrl}}/auth/admin/users/{{userId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Test Invalid Email Format
+POST {{baseUrl}}/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "email": "invalid-email"
+}
+
+###
+# Test Missing Email
+POST {{baseUrl}}/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "name": "John Doe"
+}
+
+###
+# Test Invalid Property ID Format
+POST {{baseUrl}}/auth/favorite
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "propertyId": "invalid-id"
+}
+
+###
+# Test Update Profile with Invalid Role (non-admin user)
+PUT {{baseUrl}}/auth/profile
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "role": "admin"
+}
+
+###
+# Test Admin Route Without Authentication
+GET {{baseUrl}}/auth/admin/users
+Content-Type: {{contentType}}
+
+###
+# Test Invalid Admin Password
+POST {{baseUrl}}/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "email": "admin",
+  "role": "admin",
+  "password": "wrong_password"
+}
+
+###
+# Test Password Without Admin Role
+POST {{baseUrl}}/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "email": "user@example.com",
+  "password": "somepassword"
+}
+
+###
+# Test Admin Role Without Password
+POST {{baseUrl}}/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "email": "admin",
+  "role": "admin"
+}

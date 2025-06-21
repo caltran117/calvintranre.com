@@ -27,5 +27,13 @@ export default {
         } catch (err) {
             throw err
         }
-    }
+    },
+    generateToken: (payload, secret, expiry) => {
+        return jwt.sign(payload, secret, {
+            expiresIn: expiry
+        })
+    },
+    verifyToken: (token, secret) => {
+        return jwt.verify(token, secret)
+    },
 };
