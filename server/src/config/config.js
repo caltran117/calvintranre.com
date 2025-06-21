@@ -11,6 +11,12 @@ const config = {
     database: {
         url: process.env.DATABASE_URL
     },
+    auth: {
+        jwtSecret: process.env.JWT_SECRET,
+        jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
+        jwtExpiresIn: '7d',
+        jwtRefreshExpiresIn: parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '604800', 10)
+    },
     email: {
         service: process.env.EMAIL_SERVICE,
         host: process.env.EMAIL_HOST,
