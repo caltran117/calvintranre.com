@@ -46,7 +46,7 @@ const Navbar = () => {
               <Link to="/contact" className="text-gray-800 hover:text-gray-600 px-3 py-2 text-sm font-medium">
                 CONTACT
               </Link>
-              <Link to="/subscribe" className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white px-4 py-2 text-sm font-medium transition-colors duration-300">
+              <Link to="/newsletter" className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white px-4 py-2 text-sm font-medium transition-colors duration-300">
                 SUBSCRIBE
               </Link>
             </div>

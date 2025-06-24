@@ -28,5 +28,19 @@ export default {
         
     },
 
+    AUTH: {
+        LOGIN_SUCCESS: 'Login successful',
+        LOGIN_FAILED: 'Invalid email or password',
+        UNAUTHORIZED: 'You are not authorized to access this resource',
+        FORBIDDEN: 'You do not have permission to perform this action',
+        TOKEN_EXPIRED: 'Authentication token has expired',
+        TOKEN_INVALID: 'Authentication token is invalid',
+        ALREADY_EXIST: (entity, value) => `${entity} with value ${value} already exists`,
+        INVALID_PHONE_NUMBER: 'Invalid phone number provided',
+        ACCOUNT_ALREADY_CONFIRMED: 'Account already confirmed',
+        ACCOUNT_NOT_CONFIRMED: 'Account not confirmed',
+        PASSWORD_NOT_MATCH: 'Password does not match',
+    },
+
     customMessage: (message) => message,
 };
