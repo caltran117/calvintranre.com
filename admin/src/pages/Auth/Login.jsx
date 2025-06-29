@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Lock, Mail, Building, AlertCircle } from 'lucide-react';
+import { authAPI } from '../../utils/api';
 
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
@@ -27,7 +28,6 @@ const Login = ({ onLogin }) => {
     setIsLoading(true);
     setError('');
 
-    // Basic validation
     if (!formData.email || !formData.password) {
       setError('Please fill in all fields');
       setIsLoading(false);
@@ -41,25 +41,39 @@ const Login = ({ onLogin }) => {
     }
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const userData = {
-        id: 1,
-        name: 'Admin User',
+      const response = await authAPI.signin({
         email: formData.email,
-        role: 'Administrator'
-      };
+        password: formData.password
+      });
+
+      const { accessToken, user } = response.data.data;
       
-      onLogin(userData);
+      if (!accessToken) {
+        throw new Error('No access token received');
+      }
+
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      onLogin(user);
+      
     } catch (err) {
-      setError('Login failed. Please try again.',err);
+      if (err.response?.status === 401) {
+        setError('Invalid email or password');
+      } else if (err.response?.status === 403) {
+        setError('Access denied. Admin role required.');
+      } else if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError('Login failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
@@ -72,7 +86,7 @@ const Login = ({ onLogin }) => {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,
       y: 0,
@@ -80,49 +94,50 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  const floatingShapes = [
-    { size: 'w-32 h-32', position: 'top-10 left-10', delay: 0 },
-    { size: 'w-24 h-24', position: 'top-32 right-16', delay: 0.5 },
-    { size: 'w-20 h-20', position: 'bottom-32 left-16', delay: 1 },
-    { size: 'w-28 h-28', position: 'bottom-16 right-20', delay: 1.5 }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
-      {/* Animated Background Shapes */}
-      {floatingShapes.map((shape, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ 
-            opacity: [0.1, 0.3, 0.1], 
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360]
-          }}
-          transition={{
-            duration: 8,
-            delay: shape.delay,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className={`absolute ${shape.size} ${shape.position} bg-white rounded-full blur-sm`}
-        />
-      ))}
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 opacity-50" />
+      
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ 
+          opacity: [0.05, 0.1, 0.05], 
+          scale: [1, 1.1, 1],
+          rotate: [0, 180, 360]
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute top-20 left-20 w-32 h-32 bg-black rounded-full blur-3xl"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ 
+          opacity: [0.03, 0.08, 0.03], 
+          scale: [1, 1.2, 1],
+          rotate: [360, 180, 0]
+        }}
+        transition={{
+          duration: 25,
+          delay: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute bottom-20 right-20 w-40 h-40 bg-gray-400 rounded-full blur-3xl"
+      />
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent" />
-
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+      <div className="relative z-10 w-full max-w-md">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="w-full max-w-md"
+          className="space-y-8"
         >
-          {/* Logo/Brand Section */}
           <motion.div
             variants={itemVariants}
-            className="text-center mb-8"
+            className="text-center"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -134,25 +149,23 @@ const Login = ({ onLogin }) => {
                 stiffness: 200,
                 damping: 15
               }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-xl mb-4"
+              className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-lg shadow-lg mb-6"
             >
-              <Building className="w-10 h-10 text-blue-600" />
+              <Building className="w-8 h-8 text-white" />
             </motion.div>
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Luxury Real Estate
+            <h1 className="text-3xl md:text-4xl font-light mb-2 text-gray-900">
+              ADMIN PORTAL
             </h1>
-            <p className="text-blue-100">
-              Welcome back to your admin panel
+            <p className="text-gray-600 font-light">
+              Luxury Real Estate Management
             </p>
           </motion.div>
 
-          {/* Login Form */}
           <motion.div
             variants={itemVariants}
-            className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8"
+            className="bg-white border border-gray-100 rounded-lg shadow-xl p-8"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Field */}
               <motion.div variants={itemVariants}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address
@@ -160,11 +173,11 @@ const Login = ({ onLogin }) => {
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className={`h-5 w-5 transition-colors duration-200 ${
-                      focusedField === 'email' ? 'text-blue-600' : 'text-gray-400'
+                      focusedField === 'email' ? 'text-black' : 'text-gray-400'
                     }`} />
                   </div>
                   <motion.input
-                    whileFocus={{ scale: 1.02 }}
+                    whileFocus={{ scale: 1.01 }}
                     transition={{ duration: 0.2 }}
                     type="email"
                     name="email"
@@ -172,14 +185,13 @@ const Login = ({ onLogin }) => {
                     onChange={handleChange}
                     onFocus={() => setFocusedField('email')}
                     onBlur={() => setFocusedField('')}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200 outline-none"
-                    placeholder="Enter your email"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded focus:ring-1 focus:ring-black focus:border-black transition-all duration-200 outline-none"
+                    placeholder="admin@example.com"
                     required
                   />
                 </div>
               </motion.div>
 
-              {/* Password Field */}
               <motion.div variants={itemVariants}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Password
@@ -187,11 +199,11 @@ const Login = ({ onLogin }) => {
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className={`h-5 w-5 transition-colors duration-200 ${
-                      focusedField === 'password' ? 'text-blue-600' : 'text-gray-400'
+                      focusedField === 'password' ? 'text-black' : 'text-gray-400'
                     }`} />
                   </div>
                   <motion.input
-                    whileFocus={{ scale: 1.02 }}
+                    whileFocus={{ scale: 1.01 }}
                     transition={{ duration: 0.2 }}
                     type={showPassword ? 'text' : 'password'}
                     name="password"
@@ -199,12 +211,12 @@ const Login = ({ onLogin }) => {
                     onChange={handleChange}
                     onFocus={() => setFocusedField('password')}
                     onBlur={() => setFocusedField('')}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200 outline-none"
+                    className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded focus:ring-1 focus:ring-black focus:border-black transition-all duration-200 outline-none"
                     placeholder="Enter your password"
                     required
                   />
                   <motion.button
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -215,14 +227,13 @@ const Login = ({ onLogin }) => {
                 </div>
               </motion.div>
 
-              {/* Error Message */}
               <AnimatePresence>
                 {error && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg"
+                    className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded border border-red-100"
                   >
                     <AlertCircle className="h-4 w-4 flex-shrink-0" />
                     <span className="text-sm">{error}</span>
@@ -230,14 +241,13 @@ const Login = ({ onLogin }) => {
                 )}
               </AnimatePresence>
 
-              {/* Submit Button */}
               <motion.div variants={itemVariants}>
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-medium shadow-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-black text-white py-3 px-4 rounded font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <AnimatePresence mode="wait">
                     {isLoading ? (
@@ -270,25 +280,23 @@ const Login = ({ onLogin }) => {
               </motion.div>
             </form>
 
-            {/* Footer */}
             <motion.div
               variants={itemVariants}
               className="mt-6 text-center"
             >
-              <p className="text-xs text-gray-500">
-                © 2025 Luxury Real Estate Admin Panel
+              <p className="text-xs text-gray-500 font-light">
+                © 2025 Luxury Real Estate Admin Portal
               </p>
             </motion.div>
           </motion.div>
 
-          {/* Demo Credentials */}
           <motion.div
             variants={itemVariants}
-            className="mt-6 bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center"
+            className="bg-gray-50 border border-gray-100 rounded-lg p-4 text-center"
           >
-            <p className="text-blue-100 text-sm mb-2 font-medium">Demo Credentials:</p>
-            <p className="text-blue-200 text-xs">
-              Email: admin@example.com | Password: any password
+            <p className="text-gray-700 text-sm mb-2 font-medium">Demo Credentials:</p>
+            <p className="text-gray-600 text-xs font-light">
+              Email: admin@gmail.com | Password: admin123
             </p>
           </motion.div>
         </motion.div>

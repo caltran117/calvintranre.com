@@ -119,8 +119,6 @@ export default {
                 return httpError(next, responseMessage.AUTH.UNAUTHORIZED, req, 401);
             }
 
-            // TODO: Add .populate('favProperty')
-
             const user = await userModel.findById(userId);
             if (!user) {
                 return httpError(next, responseMessage.ERROR.NOT_FOUND('User'), req, 404);
@@ -146,56 +144,6 @@ export default {
             }
 
             const user = await userModel.findByIdAndUpdate(userId, updateData, { new: true });
-            if (!user) {
-                return httpError(next, responseMessage.ERROR.NOT_FOUND('User'), req, 404);
-            }
-
-            httpResponse(req, res, 200, responseMessage.UPDATED, user);
-        } catch (err) {
-            httpError(next, err, req, 500);
-        }
-    },
-
-    addFavoriteProperty: async (req, res, next) => {
-        try {
-            const userId = req.authenticatedUser?._id;
-            if (!userId) {
-                return httpError(next, responseMessage.AUTH.UNAUTHORIZED, req, 401);
-            }
-
-            const { propertyId } = req.body;
-
-            const user = await userModel.findByIdAndUpdate(
-                userId,
-                { $addToSet: { favProperty: propertyId } },
-                { new: true }
-            );
-
-            if (!user) {
-                return httpError(next, responseMessage.ERROR.NOT_FOUND('User'), req, 404);
-            }
-
-            httpResponse(req, res, 200, responseMessage.UPDATED, user);
-        } catch (err) {
-            httpError(next, err, req, 500);
-        }
-    },
-
-    removeFavoriteProperty: async (req, res, next) => {
-        try {
-            const userId = req.authenticatedUser?._id;
-            if (!userId) {
-                return httpError(next, responseMessage.AUTH.UNAUTHORIZED, req, 401);
-            }
-
-            const { propertyId } = req.body;
-
-            const user = await userModel.findByIdAndUpdate(
-                userId,
-                { $pull: { favProperty: propertyId } },
-                { new: true }
-            );
-
             if (!user) {
                 return httpError(next, responseMessage.ERROR.NOT_FOUND('User'), req, 404);
             }

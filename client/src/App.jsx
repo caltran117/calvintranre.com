@@ -10,6 +10,9 @@ import TeamPage from './pages/TeamPage';
 import ContactPage from './pages/ContactPage';
 import useLocation from './hooks/userLocation';
 import NewsletterPage from './pages/NewsletterPage';
+import PropertyListingsPage from './pages/propertyListingPage';
+import PropertiesPage from './pages/PropertiesPage';
+import PropertyDetailPage from './pages/PropertyDetailPage';
 
 const App = () => {
   const {
@@ -52,7 +55,10 @@ const App = () => {
           <Route path="/sell" element={<SellPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/properties" element={<PropertiesPage />} />
           <Route path="/newsletter" element={<NewsletterPage />} />
+          <Route path="/properties/exclusive" element={<PropertyListingsPage />} />
+          <Route path="/properties/:propertyId" element={<PropertyDetailPage />} />
           <Route path="*" element={
             <div className="min-h-screen flex items-center justify-center">
               Page Not Found

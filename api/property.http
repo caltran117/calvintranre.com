@@ -1,0 +1,308 @@
+@baseUrl = http://localhost:4000/v1
+@contentType = application/json
+@authToken = your-jwt-token-here
+
+# Replace with actual propertyId after creating a new property
+@propertyId = 685c1ff4607deebe657c5691
+
+###
+# Check Property Service
+GET {{baseUrl}}/property/self
+Content-Type: {{contentType}}
+
+###
+# Get All Properties (with pagination)
+GET {{baseUrl}}/property?page=1&limit=10
+Content-Type: {{contentType}}
+
+###
+# Get Properties with Filters
+GET {{baseUrl}}/property?status=For Sale&propertyType=Residential&beds=3&city=Beverly Hills&featured=true
+Content-Type: {{contentType}}
+
+###
+# Get Properties by Price Range
+GET {{baseUrl}}/property?minPrice=500000&maxPrice=2000000&sortBy=pricing.salesPrice&sortOrder=asc
+Content-Type: {{contentType}}
+
+###
+# Get Rental Properties
+GET {{baseUrl}}/property?status=For Rent&minRent=2000&maxRent=5000&furnished=Furnished&petAllowed=true
+Content-Type: {{contentType}}
+
+###
+# Search Properties by Text
+GET {{baseUrl}}/property/search?query=modern estate&page=1&limit=5
+Content-Type: {{contentType}}
+
+###
+# Search Properties by Location (10km radius)
+GET {{baseUrl}}/property/search?lat=34.0522&lon=-118.2437&radius=10&limit=5
+Content-Type: {{contentType}}
+
+###
+# Search Properties by Text and Location
+GET {{baseUrl}}/property/search?query=luxury&lat=40.7128&lon=-74.0060&radius=15
+Content-Type: {{contentType}}
+
+###
+# Get Featured Properties
+GET {{baseUrl}}/property/featured?limit=6
+Content-Type: {{contentType}}
+
+###
+# Get Property by ID
+GET {{baseUrl}}/property/{{propertyId}}
+Content-Type: {{contentType}}
+
+###
+# Get Similar Properties
+GET {{baseUrl}}/property/{{propertyId}}/similar?limit=4
+Content-Type: {{contentType}}
+
+###
+# Add New Sale Property (Admin)
+POST {{baseUrl}}/property/admin/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Modern Hillside Estate 3",
+  "description": "Stunning modern estate with panoramic city views, featuring luxury amenities and contemporary design.",
+  "status": "For Sale",
+  "basicInfo": {
+    "beds": 7,
+    "baths": 9,
+    "sqft": 12500
+  },
+  "pricing": {
+    "salesPrice": 24900000,
+    "pricePerSqft": 1992,
+    "hoa": {
+      "amount": 353,
+      "frequency": "monthly"
+    }
+  },
+  "location": {
+    "address": {
+      "street": "1234 Hillside Drive",
+      "city": "Beverly Hills",
+      "state": "CA",
+      "zipCode": "90210",
+      "country": "USA"
+    },
+    "coordinates": {
+      "type": "Point",
+      "coordinates": [-118.4004, 34.0736]
+    }
+  },
+  "images": [
+    {
+      "url": "/images/listing-1.jpg",
+      "caption": "Front exterior view",
+      "isPrimary": true,
+      "order": 1
+    },
+    {
+      "url": "/images/listing-1-2.jpg",
+      "caption": "Living room",
+      "order": 2
+    }
+  ],
+  "interior": {
+    "totalBedrooms": 7,
+    "totalBathrooms": 9,
+    "fullBathrooms": 7,
+    "halfBathrooms": 2,
+    "laundryRoom": ["Inside", "Laundry Chute"],
+    "fireplace": ["Living Room", "Great Room", "Dining"],
+    "appliances": ["Refrigerator", "Dishwasher", "Wine Cooler"],
+    "flooring": ["Hardwood", "Marble", "Carpet"]
+  },
+  "areaAndLot": {
+    "livingArea": 12500,
+    "lotArea": 137,
+    "lotUnit": "Acres",
+    "mlsId": "OC25090289MR",
+    "propertyType": "Residential",
+    "yearBuilt": 1986,
+    "viewDescription": ["Hills", "Trees/Woods", "Valley"],
+    "schoolDistrict": "Beverly Hills Unified"
+  },
+  "exterior": {
+    "stories": 3,
+    "garageSpaces": 6,
+    "waterSource": "Public",
+    "pool": {
+      "hasPool": true,
+      "features": ["Diving Board", "In Ground", "Waterfall"]
+    },
+    "roof": "Slate",
+    "parkingFeatures": ["Circular Driveway", "Garage", "Oversized"],
+    "heating": "Central",
+    "airConditioning": "Central",
+    "sewer": "Public Sewer",
+    "securityFeatures": ["Automatic Gate", "Gated Community"]
+  },
+  "financial": {
+    "taxes": {
+      "annual": 150000,
+      "year": 2024
+    },
+    "insurance": {
+      "estimated": 8000,
+      "frequency": "yearly"
+    }
+  },
+  "listing": {
+    "agent": {
+      "name": "John Smith",
+      "company": "Luxury Estates Realty",
+      "phone": "+1-555-0123",
+      "email": "john@luxuryestates.com"
+    },
+    "featured": true,
+    "isActive": true
+  },
+  "amenities": {
+    "community": ["Tennis Court", "Club House", "Security"],
+    "nearby": ["Shopping", "Restaurants", "Schools"],
+    "transportation": ["Highway Access", "Public Transit"]
+  }
+}
+
+###
+# Add New Rental Property (Admin)
+POST {{baseUrl}}/property/admin/add
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Luxury Downtown Apartment",
+  "description": "Modern 2-bedroom apartment in the heart of downtown with city views and premium amenities.",
+  "status": "For Rent",
+  "basicInfo": {
+    "beds": 2,
+    "baths": 2,
+    "sqft": 1200
+  },
+  "pricing": {
+    "rentPrice": {
+      "monthly": 4500,
+      "weekly": 1200,
+      "daily": 180
+    },
+    "deposit": {
+      "security": 4500,
+      "pet": 500,
+      "cleaning": 300
+    }
+  },
+  "location": {
+    "address": {
+      "street": "789 Downtown Plaza",
+      "city": "Los Angeles",
+      "state": "CA",
+      "zipCode": "90012",
+      "country": "USA"
+    },
+    "coordinates": {
+      "type": "Point",
+      "coordinates": [-118.2437, 34.0522]
+    }
+  },
+  "images": [
+    {
+      "url": "/images/rental-1.jpg",
+      "caption": "Living room with city view",
+      "isPrimary": true,
+      "order": 1
+    }
+  ],
+  "areaAndLot": {
+    "livingArea": 1200,
+    "propertyType": "Condo",
+    "yearBuilt": 2020
+  },
+  "rental": {
+    "leaseTerms": {
+      "minimum": 12,
+      "maximum": 24,
+      "unit": "months"
+    },
+    "availableDate": "2025-02-01",
+    "petPolicy": {
+      "allowed": true,
+      "types": ["Dogs", "Cats"],
+      "restrictions": "Under 50lbs",
+      "fee": 100,
+      "deposit": 500
+    },
+    "utilities": {
+      "included": ["Water", "Trash", "Internet"],
+      "excluded": ["Electricity", "Gas"],
+      "estimatedCost": 150
+    },
+    "furnished": "Partially Furnished",
+    "parking": {
+    "included": true,
+    "spaces": 1,
+    "type": "Covered",
+    "cost": 150
+  }
+  },
+  "listing": {
+    "featured": false,
+    "isActive": true
+  }
+}
+
+###
+# Update Property (Admin)
+PUT {{baseUrl}}/property/admin/{{propertyId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Updated Modern Hillside Estate",
+  "pricing": {
+    "salesPrice": 25500000,
+    "offerPrice": 24000000
+  },
+  "listing": {
+    "featured": true
+  }
+}
+
+###
+# Update Property - Alternative Method (Using Dot Notation)
+PUT {{baseUrl}}/property/admin/{{propertyId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Updated Modern Hillside Estate",
+  "pricing.salesPrice": 25500000,
+  "pricing.offerPrice": 24000000,
+  "listing.featured": true
+}
+
+###
+# Update Property Status to Sold (Admin)
+PUT {{baseUrl}}/property/admin/{{propertyId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "Sold",
+  "listing": {
+    "soldDate": "2025-01-15",
+    "isActive": false
+  }
+}
+
+###
+# Delete Property (Admin)
+DELETE {{baseUrl}}/property/admin/{{propertyId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}

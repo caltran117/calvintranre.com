@@ -1,10 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:4000';
-
-if (!API_BASE_URL) {
-  console.error('API_BASE_URL is not defined. Please set VITE_SERVER_URL in your .env file.');
-}
+const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:4000/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -16,7 +12,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    console.log(`Making ${config.method?.toUpperCase()} request to: ${config.url}`);
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -29,55 +28,55 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
 
-export const locationAPI = {
-  saveLocation: (lat, lon) => api.post('/v1/location-stat', { lat, lon }),
+export const authAPI = {
+  signin: (credentials) => 
+    api.post('/auth/signin', {
+      email: credentials.email,
+      password: credentials.password,
+      role: 'admin'
+    }),
+  
+  getProfile: () => 
+    api.get('/auth/profile'),
 };
 
-export const newsletterAPI = {
-  subscribe: (email, consent) => api.post('/v1/newsletter/subscribe', { email, consent }),
-  unsubscribe: (email) => api.post('/v1/newsletter/unsubscribe', { email }),
+export const healthAPI = {
+  checkHealth: () => api.get('/health'),
+  checkSelf: () => api.get('/self'),
+  checkAuthSelf: () => api.get('/auth/self'),
+  checkLocationStatSelf: () => api.get('/location-stat/self'),
+  checkPropertySelf: () => api.get('/property/self'),
+  checkNewsletterSelf: () => api.get('/newsletter/self'),
 };
-
-export const ipLocationAPI = {
-  getLocation: () => axios.get('https://ipapi.co/json/'),
-};
-
 
 export const propertyAPI = {
-
   getAllProperties: (params = {}) => {
     const queryParams = new URLSearchParams();
     
     if (params.page) queryParams.append('page', params.page);
     if (params.limit) queryParams.append('limit', params.limit);
-    
     if (params.status) queryParams.append('status', params.status);
     if (params.propertyType) queryParams.append('propertyType', params.propertyType);
     if (params.beds) queryParams.append('beds', params.beds);
     if (params.city) queryParams.append('city', params.city);
     if (params.featured) queryParams.append('featured', params.featured);
-    
     if (params.minPrice) queryParams.append('minPrice', params.minPrice);
     if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice);
-    
-    if (params.minRent) queryParams.append('minRent', params.minRent);
-    if (params.maxRent) queryParams.append('maxRent', params.maxRent);
-    if (params.furnished) queryParams.append('furnished', params.furnished);
-    if (params.petAllowed) queryParams.append('petAllowed', params.petAllowed);
-    
-
     if (params.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
     
     const queryString = queryParams.toString();
-    return api.get(`/v1/property${queryString ? `?${queryString}` : ''}`);
+    return api.get(`/property${queryString ? `?${queryString}` : ''}`);
   },
-
 
   searchProperties: (params = {}) => {
     const queryParams = new URLSearchParams();
@@ -85,32 +84,31 @@ export const propertyAPI = {
     if (params.query) queryParams.append('query', params.query);
     if (params.page) queryParams.append('page', params.page);
     if (params.limit) queryParams.append('limit', params.limit);
-    
-    const queryString = queryParams.toString();
-    return api.get(`/v1/property/search${queryString ? `?${queryString}` : ''}`);
-  },
-
-  searchByLocation: (params = {}) => {
-    const queryParams = new URLSearchParams();
-    
     if (params.lat) queryParams.append('lat', params.lat);
     if (params.lon) queryParams.append('lon', params.lon);
     if (params.radius) queryParams.append('radius', params.radius);
-    if (params.limit) queryParams.append('limit', params.limit);
-    if (params.query) queryParams.append('query', params.query);
     
     const queryString = queryParams.toString();
-    return api.get(`/v1/property/search${queryString ? `?${queryString}` : ''}`);
+    return api.get(`/property/search${queryString ? `?${queryString}` : ''}`);
   },
 
-  getFeaturedProperties: (limit = 6) => 
-    api.get(`/v1/property/featured?limit=${limit}`),
+  getFeaturedProperties: (limit = 6) =>
+    api.get(`/property/featured?limit=${limit}`),
 
-  getPropertyById: (propertyId) => 
-    api.get(`/v1/property/${propertyId}`),
+  getPropertyById: (propertyId) =>
+    api.get(`/property/${propertyId}`),
 
-  getSimilarProperties: (propertyId, limit = 4) => 
-    api.get(`/v1/property/${propertyId}/similar?limit=${limit}`),
+  getSimilarProperties: (propertyId, limit = 4) =>
+    api.get(`/property/${propertyId}/similar?limit=${limit}`),
+
+  addProperty: (propertyData) =>
+    api.post('/property/admin/add', propertyData),
+
+  updateProperty: (propertyId, propertyData) =>
+    api.put(`/property/admin/${propertyId}`, propertyData),
+
+  deleteProperty: (propertyId) =>
+    api.delete(`/property/admin/${propertyId}`),
 };
 
 export default api;

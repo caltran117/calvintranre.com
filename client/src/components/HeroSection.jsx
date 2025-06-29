@@ -1,8 +1,10 @@
 // HeroSection.jsx
-import React from 'react';
+import React, { use } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   return (
     <div className="relative h-screen">
       {/* Hero Background Image */}
@@ -44,7 +46,9 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <button className="bg-white text-gray-900 px-8 py-3 font-medium hover:bg-opacity-90 transition-all duration-300">
+          <button
+          onClick={() => navigate('/properties')}
+          className="bg-white text-gray-900 px-8 py-3 font-medium hover:bg-opacity-90 transition-all duration-300">
             EXPLORE PROPERTIES
           </button>
         </motion.div>
