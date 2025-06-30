@@ -1,10 +1,10 @@
 // BuyPage.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import BuyListings from '../components/BuyListings';
 import ProcessSection from '../components/ProcessSection';
 import TestimonialsSection from '../components/TestimonialsSection';
 import ContactSection from '../components/ContactSection';
+import FeaturedListings from '../components/FeaturedListings';
 
 const BuyPage = () => {
   return (
@@ -35,7 +35,7 @@ const BuyPage = () => {
         </div>
       </motion.section>
 
-      <BuyListings />
+      <FeaturedListings />
 
       <motion.section
         className="py-16 px-4 max-w-7xl mx-auto"
