@@ -14,7 +14,8 @@ import {
   Mail,
   MapPin,
   Home,
-  RefreshCw
+  RefreshCw,
+  BarChart
 } from 'lucide-react';
 import { healthAPI } from '../../utils/api';
 
@@ -109,7 +110,28 @@ const ApiStatus = () => {
         'POST /newsletter/admin/send-bulk - Send Bulk Email (Admin)',
         'GET /newsletter/admin/stats - Get Newsletter Stats (Admin)'
       ]
-    }
+    },
+    {
+  id: 'report',
+  name: 'Report Service',
+  description: 'Dashboard analytics and reporting',
+  icon: BarChart,
+  endpoint: healthAPI.checkReportSelf,
+  color: 'from-yellow-500 to-yellow-600',
+  endpoints: [
+    'GET /report/self - Service Self-Check',
+    'GET /report/overview - Get Report Overview (Admin)',
+    'GET /report/property-stats - Property Statistics (Admin)',
+    'GET /report/user-analytics - User Analytics (Admin)',
+    'GET /report/newsletter-metrics - Newsletter Metrics (Admin)',
+    'GET /report/location-analytics - Location Analytics (Admin)',
+    'GET /report/dashboard-trends - Dashboard Trends (Admin)',
+    'GET /report/location-heatmap - Location Heatmap (Admin)',
+    'GET /report/performance-analytics - Performance Analytics (Admin)',
+    'POST /report/custom - Custom Report (Admin)',
+    'GET /report/export - Export Data (Admin)'
+  ]
+}
   ];
 
   const checkServiceHealth = async (service) => {

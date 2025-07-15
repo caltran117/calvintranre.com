@@ -119,22 +119,6 @@ const Footer = () => {
               </li>
             </ul>
 
-            <form className="mt-6">
-              <h3 className="text-lg font-medium mb-4">NEWSLETTER</h3>
-              <div className="flex">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="px-4 py-2 w-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
-                />
-                <button
-                  type="submit"
-                  className="bg-white text-gray-900 px-4 py-2 hover:bg-gray-200 transition-colors duration-300"
-                >
-                  SIGN UP
-                </button>
-              </div>
-            </form>
           </div>
         </div>
 

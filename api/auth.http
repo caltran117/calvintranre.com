@@ -57,25 +57,7 @@ Authorization: Bearer {{accessToken}}
   "isActive": true
 }
 
-###
-# Add Favorite Property (requires authentication)
-POST {{baseUrl}}/auth/favorite
-Content-Type: {{contentType}}
-Authorization: Bearer {{accessToken}}
 
-{
-  "propertyId": "{{propertyId}}"
-}
-
-###
-# Remove Favorite Property (requires authentication)
-DELETE {{baseUrl}}/auth/favorite
-Content-Type: {{contentType}}
-Authorization: Bearer {{accessToken}}
-
-{
-  "propertyId": "{{propertyId}}"
-}
 
 ###
 # Admin: Get All Users with Pagination (requires admin authentication)

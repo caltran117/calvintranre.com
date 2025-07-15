@@ -9,7 +9,9 @@ import {
   X,
   LogOut,
   User,
-  Activity
+  Activity,
+  Mail,
+  MapPin
 } from "lucide-react";
 
 const Sidebar = ({ user, onLogout }) => {
@@ -44,6 +46,18 @@ const Sidebar = ({ user, onLogout }) => {
       label: "Properties",
       href: "/properties",
       active: location.pathname === "/properties",
+    },
+    {
+      icon: Mail,
+      label: "Newsletter",
+      href: "/newsletter",
+      active: location.pathname === "/newsletter",
+    },
+    {
+      icon: MapPin,
+      label: "Location Stats",
+      href: "/location-stats",
+      active: location.pathname === "/location-stats",
     },
     {
       icon: Activity,
