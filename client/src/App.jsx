@@ -13,6 +13,8 @@ import NewsletterPage from './pages/NewsletterPage';
 import PropertyListingsPage from './pages/propertyListingPage';
 import PropertiesPage from './pages/PropertiesPage';
 import PropertyDetailPage from './pages/PropertyDetailPage';
+import ProfilePage from './pages/ProfilePage';
+import { AuthProvider } from './context/AuthContext';
 
 const App = () => {
   const {
@@ -36,39 +38,42 @@ const App = () => {
   }, [isLocationSaved, permissionStatus, locationData, isLoading, error]);
 
   return (
-    <Router>
-      <Navbar />
-      
-      {import.meta.env.DEV && (
-        <div className="bg-blue-100 p-2 text-xs text-center">
-          Location Status: {isLocationSaved ? 'Saved' : 'Not Saved'} | 
-          Permission: {permissionStatus} | 
-          {isLoading && 'Loading...'} |
-          {error && `Error: ${error}`}
-        </div>
-      )}
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        
+        {import.meta.env.DEV && (
+          <div className="bg-blue-100 p-2 text-xs text-center">
+            Location Status: {isLocationSaved ? 'Saved' : 'Not Saved'} | 
+            Permission: {permissionStatus} | 
+            {isLoading && 'Loading...'} |
+            {error && `Error: ${error}`}
+          </div>
+        )}
 
-      <AnimatePresence mode="wait">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/buy" element={<BuyPage />} />
-          <Route path="/sell" element={<SellPage />} />
-          <Route path="/team" element={<TeamPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/properties" element={<PropertiesPage />} />
-          <Route path="/newsletter" element={<NewsletterPage />} />
-          <Route path="/properties/exclusive" element={<PropertyListingsPage />} />
-          <Route path="/properties/:propertyId" element={<PropertyDetailPage />} />
-          <Route path="*" element={
-            <div className="min-h-screen flex items-center justify-center">
-              Page Not Found
-            </div>
-          } />
-        </Routes>
-      </AnimatePresence>
-      
-      <Footer />
-    </Router>
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/buy" element={<BuyPage />} />
+            <Route path="/sell" element={<SellPage />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/properties" element={<PropertiesPage />} />
+            <Route path="/newsletter" element={<NewsletterPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/properties/exclusive" element={<PropertyListingsPage />} />
+            <Route path="/properties/:propertyId" element={<PropertyDetailPage />} />
+            <Route path="*" element={
+              <div className="min-h-screen flex items-center justify-center">
+                Page Not Found
+              </div>
+            } />
+          </Routes>
+        </AnimatePresence>
+        
+        <Footer />
+      </Router>
+    </AuthProvider>
   );
 };
 

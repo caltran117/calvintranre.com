@@ -12,6 +12,7 @@ import {
 } from '../schema/property.schema.js';
 import authController from '../controller/Authentication/auth.controller.js';
 import newsletterController from '../controller/Newsletter/newsletter.controller.js'
+import reportController from '../controller/Report/report.controller.js'
 import { 
     signInSchema, 
     updateUserSchema, 
@@ -28,6 +29,18 @@ import {
     getNewsletterSubscribersSchema,
     sendBulkEmailSchema
 } from '../schema/newsletters.schema.js';
+import {
+    reportQuerySchema,
+    propertyStatsQuerySchema,
+    userAnalyticsQuerySchema,
+    newsletterMetricsQuerySchema,
+    locationAnalyticsQuerySchema,
+    customReportSchema,
+    exportDataQuerySchema,
+    dashboardTrendsQuerySchema,
+    locationHeatmapQuerySchema,
+    performanceAnalyticsQuerySchema
+} from '../schema/report.schema.js';
 import authentication from '../middleware/authentication.js';
 import authorization from '../middleware/authorization.js'
 import { EUserRole } from '../constant/application.js';
@@ -86,5 +99,18 @@ router.route('/newsletter/admin/subscribers/:id').put(authentication, authorizat
 router.route('/newsletter/admin/subscribers/:id').delete(authentication, authorization([EUserRole.ADMIN]), newsletterController.deleteSubscriber)
 router.route('/newsletter/admin/send-bulk').post(authentication, authorization([EUserRole.ADMIN]), validateRequest(sendBulkEmailSchema), newsletterController.sendBulkEmail)
 router.route('/newsletter/admin/stats').get(authentication, authorization([EUserRole.ADMIN]), newsletterController.getStats)
+
+// Report routes - Admin only
+router.route('/report/self').get(reportController.self)
+router.route('/report/overview').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(reportQuerySchema, 'query'), reportController.overview)
+router.route('/report/property-stats').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(propertyStatsQuerySchema, 'query'), reportController.propertyStats)
+router.route('/report/user-analytics').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(userAnalyticsQuerySchema, 'query'), reportController.userAnalytics)
+router.route('/report/newsletter-metrics').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(newsletterMetricsQuerySchema, 'query'), reportController.newsletterMetrics)
+router.route('/report/location-analytics').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(locationAnalyticsQuerySchema, 'query'), reportController.locationAnalytics)
+router.route('/report/dashboard-trends').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(dashboardTrendsQuerySchema, 'query'), reportController.dashboardTrends)
+router.route('/report/location-heatmap').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(locationHeatmapQuerySchema, 'query'), reportController.locationHeatmap)
+router.route('/report/performance-analytics').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(performanceAnalyticsQuerySchema, 'query'), reportController.performanceAnalytics)
+router.route('/report/custom').post(authentication, authorization([EUserRole.ADMIN]), validateRequest(customReportSchema), reportController.customReport)
+router.route('/report/export').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(exportDataQuerySchema, 'query'), reportController.exportData)
 
 export default router

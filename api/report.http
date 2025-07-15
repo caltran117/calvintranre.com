@@ -1,0 +1,260 @@
+@baseUrl = http://localhost:4000/v1
+@contentType = application/json
+@accessToken = 
+
+###
+# Check Report Service
+GET {{baseUrl}}/report/self
+Content-Type: {{contentType}}
+
+###
+# Get Overview Report
+GET {{baseUrl}}/report/overview
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Overview Report with Date Range
+GET {{baseUrl}}/report/overview?startDate=2024-01-01&endDate=2024-12-31
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Property Statistics
+GET {{baseUrl}}/report/property-stats
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Property Statistics with Filters
+GET {{baseUrl}}/report/property-stats?status=For Sale&propertyType=Residential&city=Houston&startDate=2024-01-01&endDate=2024-12-31
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get User Analytics
+GET {{baseUrl}}/report/user-analytics
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get User Analytics with Filters
+GET {{baseUrl}}/report/user-analytics?role=admin&startDate=2024-01-01&endDate=2024-12-31
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Newsletter Metrics
+GET {{baseUrl}}/report/newsletter-metrics
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Newsletter Metrics with Date Range
+GET {{baseUrl}}/report/newsletter-metrics?startDate=2024-01-01&endDate=2024-12-31
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Location Analytics
+GET {{baseUrl}}/report/location-analytics
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Location Analytics with Date Range
+GET {{baseUrl}}/report/location-analytics?startDate=2024-01-01&endDate=2024-12-31
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Generate Custom Report - Properties and Users Count
+POST {{baseUrl}}/report/custom
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "models": ["properties", "users"],
+  "metrics": ["count", "distribution"],
+  "startDate": "2024-01-01",
+  "endDate": "2024-12-31",
+  "filters": {
+    "properties": {
+      "listing.status": "For Sale"
+    },
+    "users": {
+      "role": "admin"
+    }
+  }
+}
+
+###
+# Generate Custom Report - All Models with All Metrics
+POST {{baseUrl}}/report/custom
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "models": ["properties", "users", "newsletter", "locations"],
+  "metrics": ["count", "distribution", "pricing"],
+  "startDate": "2024-01-01",
+  "endDate": "2024-12-31"
+}
+
+###
+# Generate Custom Report - Newsletter Growth Analysis
+POST {{baseUrl}}/report/custom
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "models": ["newsletter"],
+  "metrics": ["count", "distribution", "growth"],
+  "startDate": "2024-06-01",
+  "endDate": "2024-12-31",
+  "filters": {
+    "newsletter": {
+      "consent": true
+    }
+  }
+}
+
+###
+# Export Properties Data as JSON
+GET {{baseUrl}}/report/export?model=properties&format=json
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Export Properties Data as CSV
+GET {{baseUrl}}/report/export?model=properties&format=csv
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Export Users Data with Date Range
+GET {{baseUrl}}/report/export?model=users&format=json&startDate=2024-01-01&endDate=2024-12-31
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Export Newsletter Data with Filters
+GET {{baseUrl}}/report/export?model=newsletter&format=json&filters={"isSubscribed":true,"consent":true}
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Export Location Stats Data
+GET {{baseUrl}}/report/export?model=locations&format=csv
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Test Invalid Model Export
+GET {{baseUrl}}/report/export?model=invalid&format=json
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Test Unauthorized Access - Overview Report
+GET {{baseUrl}}/report/overview
+Content-Type: {{contentType}}
+
+###
+# Test Invalid Date Range
+GET {{baseUrl}}/report/overview?startDate=invalid-date&endDate=2024-12-31
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Test Invalid Property Status Filter
+GET {{baseUrl}}/report/property-stats?status=InvalidStatus
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Test Invalid User Role Filter
+GET {{baseUrl}}/report/user-analytics?role=invalidrole
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Test Custom Report with Invalid Models
+POST {{baseUrl}}/report/custom
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "models": ["invalid-model"],
+  "metrics": ["count"]
+}
+
+###
+# Test Custom Report with Missing Required Fields
+POST {{baseUrl}}/report/custom
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "models": ["properties"]
+}
+
+###
+# Test Export with Invalid Format
+GET {{baseUrl}}/report/export?model=properties&format=xml
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Dashboard Trends (Month over Month)
+GET {{baseUrl}}/report/dashboard-trends
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Dashboard Trends with Period
+GET {{baseUrl}}/report/dashboard-trends?period=month
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Location Heatmap (7 days)
+GET {{baseUrl}}/report/location-heatmap
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Location Heatmap with Custom Days
+GET {{baseUrl}}/report/location-heatmap?days=14
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Performance Analytics (30 days)
+GET {{baseUrl}}/report/performance-analytics
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Get Performance Analytics with Custom Period
+GET {{baseUrl}}/report/performance-analytics?period=60
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Negative Test - Invalid dashboard trends period
+GET {{baseUrl}}/report/dashboard-trends?period=invalid
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Negative Test - Invalid heatmap days
+GET {{baseUrl}}/report/location-heatmap?days=abc
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Negative Test - Invalid performance period
+GET {{baseUrl}}/report/performance-analytics?period=invalid
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}

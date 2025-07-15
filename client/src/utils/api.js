@@ -17,6 +17,12 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     console.log(`Making ${config.method?.toUpperCase()} request to: ${config.url}`);
+    
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
     return config;
   },
   (error) => {
@@ -47,6 +53,18 @@ export const ipLocationAPI = {
   getLocation: () => axios.get('https://ipapi.co/json/'),
 };
 
+
+export const authAPI = {
+  signin: (email, role, password) => {
+    const payload = { email };
+    if (role) payload.role = role;
+    if (password) payload.password = password;
+    return api.post('/v1/auth/signin', payload);
+  },
+  getProfile: () => api.get('/v1/auth/profile'),
+  updateProfile: (data) => api.put('/v1/auth/profile', data),
+  checkAuth: () => api.get('/v1/auth/self'),
+};
 
 export const propertyAPI = {
 

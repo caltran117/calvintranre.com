@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { motion, AnimatePresence } from 'framer-motion';
 import Home from './pages/Home/Home';
 import Properties from './pages/Properties/Properties';
+import Newsletter from './pages/Newsletter/Newsletter';
+import LocationStats from './pages/LocationStats/LocationStats';
 import ApiStatus from './pages/ApiStatus/ApiStatus';
 import Sidebar from './components/Sidebar/Sidebar';
 import Login from './pages/Auth/Login';
@@ -74,6 +76,8 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/properties" element={<Properties />} />
+                <Route path="/newsletter" element={<Newsletter />} />
+                <Route path="/location-stats" element={<LocationStats />} />
                 <Route path="/api-status" element={<ApiStatus />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

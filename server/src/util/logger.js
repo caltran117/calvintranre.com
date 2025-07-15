@@ -137,5 +137,5 @@ export default createLogger({
     defaultMeta: {
         meta: {}
     },
-    transports: [...fileTransport(), ...mongodbTransport(), ...consoleTransport()]
+    transports: [...fileTransport(), ...consoleTransport()]
 })
