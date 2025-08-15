@@ -64,6 +64,11 @@ export const authAPI = {
   getProfile: () => api.get('/v1/auth/profile'),
   updateProfile: (data) => api.put('/v1/auth/profile', data),
   checkAuth: () => api.get('/v1/auth/self'),
+  getFavorites: () => api.get('/v1/auth/favorites'),
+  addFavorite: (propertyId, propertyType, propertyData) => 
+    api.post('/v1/auth/favorites', { propertyId, propertyType, propertyData }),
+  removeFavorite: (propertyId, propertyType) => 
+    api.delete('/v1/auth/favorites', { data: { propertyId, propertyType } }),
 };
 
 export const propertyAPI = {

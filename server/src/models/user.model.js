@@ -26,7 +26,26 @@ const userSchema = new mongoose.Schema({
   lastLogin:{
     type: Date,
     default: Date.now
-  }
+  },
+  favorites: [{
+    propertyId: {
+      type: String,
+      required: true
+    },
+    propertyType: {
+      type: String,
+      enum: ['database', 'simplyrets'],
+      required: true
+    },
+    propertyData: {
+      type: mongoose.Schema.Types.Mixed,
+      required: true
+    },
+    addedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true
 });

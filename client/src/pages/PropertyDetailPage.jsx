@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Heart } from 'lucide-react';
 import { propertyAPI } from '../utils/api';
+import { useFavorites } from '../context/FavoritesContext';
+import { useAuth } from '../context/AuthContext';
 import ImageGallery from '../components/PropertyDetail/ImageGallery';
 import PropertyInfo from '../components/PropertyDetail/PropertyInfo';
 import PropertyFeatures from '../components/PropertyDetail/PropertyFeatures';
@@ -16,6 +19,8 @@ const PropertyDetailPage = () => {
   const [similarProperties, setSimilarProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchPropertyDetails = async () => {
@@ -47,6 +52,34 @@ const PropertyDetailPage = () => {
       return `$${(price / 1000000).toFixed(2)}M`;
     }
     return `$${price.toLocaleString()}`;
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      alert('Please sign in to add favorites');
+      return;
+    }
+
+    try {
+      const propertyId = property._id;
+      const propertyType = 'database';
+      const propertyData = {
+        _id: property._id,
+        title: property.title,
+        pricing: property.pricing,
+        location: property.location,
+        basicInfo: property.basicInfo,
+        images: property.images,
+        status: property.status,
+        listing: property.listing,
+        areaAndLot: property.areaAndLot
+      };
+
+      await toggleFavorite(propertyId, propertyType, propertyData);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      alert('Failed to update favorite. Please try again.');
+    }
   };
 
   if (loading) {
@@ -126,9 +159,21 @@ const PropertyDetailPage = () => {
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl md:text-3xl font-light text-gray-900">
-                        {price ? formatPrice(price) : 'Price on Request'}
-                        {property.status === 'For Rent' && <span className="text-lg text-gray-500">/month</span>}
+                      <div className="flex items-center justify-end space-x-3 mb-2">
+                        <button
+                          onClick={handleToggleFavorite}
+                          className={`p-3 rounded-full transition-all duration-200 ${
+                            isFavorite(property._id, 'database')
+                              ? 'bg-red-500 text-white hover:bg-red-600'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-red-500'
+                          }`}
+                        >
+                          <Heart size={20} className={isFavorite(property._id, 'database') ? 'fill-current' : ''} />
+                        </button>
+                        <div className="text-2xl md:text-3xl font-light text-gray-900">
+                          {price ? formatPrice(price) : 'Price on Request'}
+                          {property.status === 'For Rent' && <span className="text-lg text-gray-500">/month</span>}
+                        </div>
                       </div>
                       {property.pricing?.pricePerSqft && (
                         <div className="text-sm text-gray-500 mt-1">

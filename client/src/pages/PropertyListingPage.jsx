@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Home, Bed, Bath, Square, Search, Filter, Grid, List, Heart, Share2, Eye, Calendar, ChevronDown, Loader2 } from 'lucide-react';
+import { useFavorites } from '../context/FavoritesContext';
+import { useAuth } from '../context/AuthContext';
 
 const PropertyListingsPage = () => {
   const [properties, setProperties] = useState([]);
@@ -11,8 +13,10 @@ const PropertyListingsPage = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [favorites, setFavorites] = useState(new Set());
   const [sortBy, setSortBy] = useState('price-low');
+  
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const { isAuthenticated } = useAuth();
   
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
@@ -37,7 +41,7 @@ const PropertyListingsPage = () => {
     setError(null);
 
     try {
-      let queryParams = `limit=100&status=${filters.status}`;
+      let queryParams = `limit=2&status=${filters.status}`;
       
       if (filters.minPrice) queryParams += `&minprice=${filters.minPrice}`;
       if (filters.maxPrice) queryParams += `&maxprice=${filters.maxPrice}`;
@@ -225,14 +229,30 @@ const PropertyListingsPage = () => {
     fetchProperties();
   }, [filters]);
 
-  const toggleFavorite = (propertyId) => {
-    const newFavorites = new Set(favorites);
-    if (newFavorites.has(propertyId)) {
-      newFavorites.delete(propertyId);
-    } else {
-      newFavorites.add(propertyId);
+  const handleToggleFavorite = async (property) => {
+    if (!isAuthenticated) {
+      alert('Please sign in to add favorites');
+      return;
     }
-    setFavorites(newFavorites);
+
+    try {
+      const propertyId = String(property.mlsId || property.id);
+      const propertyType = 'simplyrets';
+      const propertyData = {
+        mlsId: property.mlsId,
+        listPrice: property.listPrice,
+        address: property.address,
+        photos: property.photos,
+        property: property.property,
+        listDate: property.listDate,
+        geo: property.geo
+      };
+
+      await toggleFavorite(propertyId, propertyType, propertyData);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      alert('Failed to update favorite. Please try again.');
+    }
   };
 
   const handleFilterChange = (filterName, value) => {
@@ -568,15 +588,15 @@ const PropertyListingsPage = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleFavorite(property.mlsId || index);
+                              handleToggleFavorite(property);
                             }}
                             className={`p-1.5 rounded transition-colors ${
-                              favorites.has(property.mlsId || index)
+                              isFavorite(String(property.mlsId || property.id), 'simplyrets')
                                 ? 'bg-red-500 text-white'
                                 : 'bg-white/80 text-gray-600 hover:bg-white'
                             }`}
                           >
-                            <Heart size={12} />
+                            <Heart size={12} className={isFavorite(String(property.mlsId || property.id), 'simplyrets') ? 'fill-current' : ''} />
                           </button>
                           <button
                             onClick={(e) => e.stopPropagation()}

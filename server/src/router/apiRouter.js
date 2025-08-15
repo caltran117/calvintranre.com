@@ -57,6 +57,9 @@ router.route('/auth/self').get(authController.self)
 router.route('/auth/signin').post(validateRequest(signInSchema), authController.signIn)
 router.route('/auth/profile').get(authentication, authController.getProfile)
 router.route('/auth/profile').put(authentication, validateRequest(updateUserSchema), authController.updateProfile)
+router.route('/auth/favorites').get(authentication, authController.getFavorites)
+router.route('/auth/favorites').post(authentication, validateRequest(addFavoritePropertySchema), authController.addFavorite)
+router.route('/auth/favorites').delete(authentication, validateRequest(removeFavoritePropertySchema), authController.removeFavorite)
 
 // Admin routes
 router.route('/auth/admin/users').get(authentication,authorization([EUserRole.ADMIN]), validateRequest(getUsersQuerySchema, 'query'), authController.getAllUsers)

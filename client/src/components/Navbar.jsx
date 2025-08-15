@@ -6,12 +6,14 @@ import HamburgerMenu from './HamburgerMenu';
 import Logo from './Logo';
 import SigninModal from './SigninModal';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSigninModalOpen, setIsSigninModalOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const { user, isAuthenticated, signin, signout } = useAuth();
+  const { favorites } = useFavorites();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -118,7 +120,7 @@ const Navbar = () => {
                       <div className="px-4 py-3 border-b border-gray-100">
                         <div className="grid grid-cols-2 gap-4 text-center">
                           <div>
-                            <p className="text-lg font-semibold text-gray-900">{user?.favProperty?.length || 0}</p>
+                            <p className="text-lg font-semibold text-gray-900">{favorites?.length || 0}</p>
                             <p className="text-xs text-gray-500">FAVORITES</p>
                           </div>
                           <div>
