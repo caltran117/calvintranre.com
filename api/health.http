@@ -1,0 +1,13 @@
+
+@baseUrl = http://localhost:4000/v1
+@contentType = application/json
+
+###
+# Check Health Service
+GET {{baseUrl}}/self
+Content-Type: {{contentType}}
+
+###
+# Check API Health
+GET {{baseUrl}}/health
+Content-Type: {{contentType}}

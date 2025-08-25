@@ -1,13 +1,56 @@
 // HomePage.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
 import FeaturedListings from '../components/FeaturedListings';
 import TeamSection from '../components/TeamSection';
 import TestimonialsSection from '../components/TestimonialsSection';
+import NewsletterSection from '../components/NewsletterSection';
 import ContactSection from '../components/ContactSection';
+import { locationAPI, ipLocationAPI } from '../utils/api';
 
 const HomePage = () => {
+  useEffect(() => {
+    // Track user location for analytics (with user permission)
+    const trackLocation = async () => {
+      try {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              try {
+                await locationAPI.saveLocation(
+                  position.coords.latitude,
+                  position.coords.longitude
+                );
+              } catch (error) {
+                console.warn('Location tracking failed:', error);
+              }
+            },
+            async () => {
+              // Fallback to IP-based location if geolocation is denied
+              try {
+                const response = await ipLocationAPI.getLocation();
+                if (response.data.latitude && response.data.longitude) {
+                  await locationAPI.saveLocation(
+                    response.data.latitude,
+                    response.data.longitude
+                  );
+                }
+              } catch (error) {
+                console.warn('IP location tracking failed:', error);
+              }
+            },
+            { timeout: 10000 }
+          );
+        }
+      } catch (error) {
+        console.warn('Location tracking setup failed:', error);
+      }
+    };
+
+    trackLocation();
+  }, []);
+
   return (
     <div className="min-h-screen">
       <HeroSection />
@@ -41,6 +84,7 @@ const HomePage = () => {
       <FeaturedListings />
       <TeamSection />
       <TestimonialsSection />
+      <NewsletterSection />
       <ContactSection />
     </div>
   );
