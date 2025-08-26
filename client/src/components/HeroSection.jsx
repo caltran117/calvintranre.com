@@ -38,7 +38,7 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          The Umansky Team is known as one of LA's leading real estate teams and one of the most successful in the country.
+          Powered by Berkshire Hathaway HomeServices — the #1 brokerage in Greater Philadelphia by volume and number of homes sold.
         </motion.p>
         
         <motion.div

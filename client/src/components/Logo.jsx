@@ -26,9 +26,9 @@ const Logo = () => {
           </svg>
         </div>
         <div className="text-gray-800">
-          <div className="text-xs">THE</div>
-          <div className="text-sm font-bold -mt-1">UMANSKY</div>
-          <div className="text-sm font-bold -mt-1">TEAM</div>
+          <div className="text-sm font-bold -mt-1">CALVIN</div>
+          <div className="text-sm font-bold -mt-1">TRAN</div>
+          <div className="text-sm font-bold -mt-1">RE</div>
         </div>
       </motion.div>
     </Link>
