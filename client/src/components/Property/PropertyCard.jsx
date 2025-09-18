@@ -1,12 +1,47 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { Heart } from 'lucide-react';
+import { useFavorites } from '../../context/FavoritesContext';
+import { useAuth } from '../../context/AuthContext';
 
 const PropertyCard = ({ property }) => {
   const navigate = useNavigate();
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const { isAuthenticated } = useAuth();
 
   const handleCardClick = () => {
     navigate(`/properties/${property._id}`);
+  };
+
+  const handleToggleFavorite = async (e) => {
+    e.stopPropagation(); // Prevent card click navigation
+    
+    if (!isAuthenticated) {
+      alert('Please sign in to add favorites');
+      return;
+    }
+
+    try {
+      const propertyId = property._id;
+      const propertyType = 'database';
+      const propertyData = {
+        _id: property._id,
+        title: property.title,
+        pricing: property.pricing,
+        location: property.location,
+        basicInfo: property.basicInfo,
+        images: property.images,
+        status: property.status,
+        listing: property.listing,
+        areaAndLot: property.areaAndLot
+      };
+
+      await toggleFavorite(propertyId, propertyType, propertyData);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      alert('Failed to update favorite. Please try again.');
+    }
   };
   const formatPrice = (price) => {
     if (price >= 1000000) {
@@ -41,8 +76,20 @@ const PropertyCard = ({ property }) => {
           </div>
         )}
         
-        <div className="absolute top-4 right-4 bg-white bg-opacity-90 px-3 py-1 text-sm font-light">
-          {property.status}
+        <div className="absolute top-4 right-4 flex items-center space-x-2">
+          <button
+            onClick={handleToggleFavorite}
+            className={`p-2 rounded-full transition-all duration-200 ${
+              isFavorite(property._id, 'database')
+                ? 'bg-red-500 text-white hover:bg-red-600'
+                : 'bg-white bg-opacity-90 text-gray-600 hover:bg-white hover:text-red-500'
+            }`}
+          >
+            <Heart size={16} className={isFavorite(property._id, 'database') ? 'fill-current' : ''} />
+          </button>
+          <div className="bg-white bg-opacity-90 px-3 py-1 text-sm font-light">
+            {property.status}
+          </div>
         </div>
       </div>
 

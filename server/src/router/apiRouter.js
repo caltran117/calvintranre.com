@@ -45,6 +45,12 @@ import authentication from '../middleware/authentication.js';
 import authorization from '../middleware/authorization.js'
 import { EUserRole } from '../constant/application.js';
 import propertyController from '../controller/Property/property.controller.js';
+import contactController from '../controller/Contact/contact.controller.js';
+import {
+    createContactSchema,
+    updateContactStatusSchema,
+    getContactsQuerySchema
+} from '../schema/contact.schema.js';
 
 const router = Router()
 
@@ -57,6 +63,9 @@ router.route('/auth/self').get(authController.self)
 router.route('/auth/signin').post(validateRequest(signInSchema), authController.signIn)
 router.route('/auth/profile').get(authentication, authController.getProfile)
 router.route('/auth/profile').put(authentication, validateRequest(updateUserSchema), authController.updateProfile)
+router.route('/auth/favorites').get(authentication, authController.getFavorites)
+router.route('/auth/favorites').post(authentication, validateRequest(addFavoritePropertySchema), authController.addFavorite)
+router.route('/auth/favorites').delete(authentication, validateRequest(removeFavoritePropertySchema), authController.removeFavorite)
 
 // Admin routes
 router.route('/auth/admin/users').get(authentication,authorization([EUserRole.ADMIN]), validateRequest(getUsersQuerySchema, 'query'), authController.getAllUsers)
@@ -99,6 +108,18 @@ router.route('/newsletter/admin/subscribers/:id').put(authentication, authorizat
 router.route('/newsletter/admin/subscribers/:id').delete(authentication, authorization([EUserRole.ADMIN]), newsletterController.deleteSubscriber)
 router.route('/newsletter/admin/send-bulk').post(authentication, authorization([EUserRole.ADMIN]), validateRequest(sendBulkEmailSchema), newsletterController.sendBulkEmail)
 router.route('/newsletter/admin/stats').get(authentication, authorization([EUserRole.ADMIN]), newsletterController.getStats)
+
+// Contact routes
+router.route('/contact/self').get(contactController.self)
+router.route('/contact').post(authentication, validateRequest(createContactSchema), contactController.createContact)
+router.route('/contact/user').get(authentication, contactController.getUserContacts)
+
+// Admin contact routes
+router.route('/contact/admin/all').get(authentication, authorization([EUserRole.ADMIN]), validateRequest(getContactsQuerySchema, 'query'), contactController.getAllContacts)
+router.route('/contact/admin/stats').get(authentication, authorization([EUserRole.ADMIN]), contactController.getContactStats)
+router.route('/contact/admin/:id').get(authentication, authorization([EUserRole.ADMIN]), contactController.getContactById)
+router.route('/contact/admin/:id').put(authentication, authorization([EUserRole.ADMIN]), validateRequest(updateContactStatusSchema), contactController.updateContact)
+router.route('/contact/admin/:id').delete(authentication, authorization([EUserRole.ADMIN]), contactController.deleteContact)
 
 // Report routes - Admin only
 router.route('/report/self').get(reportController.self)

@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
 import FeaturedListings from '../components/FeaturedListings';
+import IDXFeaturedSection from '../components/IDXFeaturedSection';
 import TeamSection from '../components/TeamSection';
 import TestimonialsSection from '../components/TestimonialsSection';
 import NewsletterSection from '../components/NewsletterSection';
@@ -80,8 +81,9 @@ const HomePage = () => {
           </motion.p>
         </div>
       </motion.section>
-      
+
       <FeaturedListings />
+      <IDXFeaturedSection />
       <TeamSection />
       <TestimonialsSection />
       <NewsletterSection />
