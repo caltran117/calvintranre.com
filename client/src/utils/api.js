@@ -71,6 +71,17 @@ export const authAPI = {
     api.delete('/v1/auth/favorites', { data: { propertyId, propertyType } }),
 };
 
+export const contactAPI = {
+  submitContact: (contactData) => api.post('/v1/contact', contactData),
+  getUserContacts: (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+    const queryString = queryParams.toString();
+    return api.get(`/v1/contact/user${queryString ? `?${queryString}` : ''}`);
+  },
+};
+
 export const propertyAPI = {
 
   getAllProperties: (params = {}) => {

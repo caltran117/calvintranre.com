@@ -56,6 +56,7 @@ export const healthAPI = {
   checkLocationStatSelf: () => api.get('/location-stat/self'),
   checkPropertySelf: () => api.get('/property/self'),
   checkNewsletterSelf: () => api.get('/newsletter/self'),
+  checkContactSelf: () => api.get('/contact/self'),
   checkReportSelf: () => api.get('/report/self'),
 };
 
@@ -158,6 +159,34 @@ export const locationStatAPI = {
 
   deleteLocationStat: (locationStatId) =>
     api.delete(`/location-stat/${locationStatId}`),
+};
+
+export const contactAPI = {
+  getAllContacts: (params = {}) => {
+    const queryParams = new URLSearchParams();
+
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+    if (params.status) queryParams.append('status', params.status);
+    if (params.interest) queryParams.append('interest', params.interest);
+    if (params.isActive !== undefined) queryParams.append('isActive', params.isActive);
+    if (params.search) queryParams.append('search', params.search);
+
+    const queryString = queryParams.toString();
+    return api.get(`/contact/admin/all${queryString ? `?${queryString}` : ''}`);
+  },
+
+  getContactById: (contactId) =>
+    api.get(`/contact/admin/${contactId}`),
+
+  updateContact: (contactId, data) =>
+    api.put(`/contact/admin/${contactId}`, data),
+
+  deleteContact: (contactId) =>
+    api.delete(`/contact/admin/${contactId}`),
+
+  getContactStats: () =>
+    api.get('/contact/admin/stats'),
 };
 
 export const reportAPI = {

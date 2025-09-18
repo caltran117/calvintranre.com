@@ -14,6 +14,8 @@ import PropertyListingsPage from './pages/propertyListingPage';
 import PropertiesPage from './pages/PropertiesPage';
 import PropertyDetailPage from './pages/PropertyDetailPage';
 import ProfilePage from './pages/ProfilePage';
+import IDXBrokerPage from './pages/IDXBrokerPage';
+import IDXBrokerPropertiesPage from './pages/IDXBrokerPropertiesPage';
 import { AuthProvider } from './context/AuthContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 
@@ -63,7 +65,8 @@ const App = () => {
               <Route path="/properties" element={<PropertiesPage />} />
               <Route path="/newsletter" element={<NewsletterPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/properties/exclusive" element={<PropertyListingsPage />} />
+              <Route path="/search" element={<IDXBrokerPage />} />
+              <Route path="/properties/exclusive" element={<IDXBrokerPropertiesPage />} />
               <Route path="/properties/:propertyId" element={<PropertyDetailPage />} />
               <Route path="*" element={
                 <div className="min-h-screen flex items-center justify-center">

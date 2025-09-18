@@ -1,8 +1,73 @@
-// ContactSection.jsx
-import React from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { contactAPI } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 
 const ContactSection = () => {
+  const { isAuthenticated } = useAuth();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    interest: '',
+    message: '',
+    subscribeNewsletter: false
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('Form submitted!', { formData, isAuthenticated });
+
+    if (!isAuthenticated) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Please sign in to submit a contact form.'
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      console.log('Calling API with:', formData);
+      const response = await contactAPI.submitContact(formData);
+      console.log('API response:', response);
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you for your message! We\'ll get back to you soon.'
+      });
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        interest: '',
+        message: '',
+        subscribeNewsletter: false
+      });
+    } catch (error) {
+      console.error('Contact form submission error:', error);
+      setSubmitStatus({
+        type: 'error',
+        message: error.response?.data?.message || 'Failed to submit form. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -103,29 +168,45 @@ const ContactSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <form className="bg-gray-50 p-8 shadow-sm">
+            <form onSubmit={handleSubmit} className="bg-gray-50 p-8 shadow-sm">
               <h3 className="text-2xl font-light mb-6">SEND US A MESSAGE</h3>
+
+              {submitStatus && (
+                <div className={`mb-6 p-4 rounded-lg ${
+                  submitStatus.type === 'success'
+                    ? 'bg-green-50 border border-green-200 text-green-800'
+                    : 'bg-red-50 border border-red-200 text-red-800'
+                }`}>
+                  {submitStatus.message}
+                </div>
+              )}
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
                     First Name*
                   </label>
                   <input
                     type="text"
-                    id="first-name"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
                     className="w-full border-gray-300 border p-2 focus:ring-gray-500 focus:border-gray-500"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
                     Last Name*
                   </label>
                   <input
                     type="text"
-                    id="last-name"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
                     className="w-full border-gray-300 border p-2 focus:ring-gray-500 focus:border-gray-500"
                     required
                   />
@@ -139,6 +220,9 @@ const ContactSection = () => {
                 <input
                   type="email"
                   id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full border-gray-300 border p-2 focus:ring-gray-500 focus:border-gray-500"
                   required
                 />
@@ -151,6 +235,9 @@ const ContactSection = () => {
                 <input
                   type="tel"
                   id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="w-full border-gray-300 border p-2 focus:ring-gray-500 focus:border-gray-500"
                 />
               </div>
@@ -161,6 +248,9 @@ const ContactSection = () => {
                 </label>
                 <select
                   id="interest"
+                  name="interest"
+                  value={formData.interest}
+                  onChange={handleChange}
                   className="w-full border-gray-300 border p-2 focus:ring-gray-500 focus:border-gray-500"
                 >
                   <option value="">Select an option</option>
@@ -178,6 +268,9 @@ const ContactSection = () => {
                 </label>
                 <textarea
                   id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   rows="4"
                   className="w-full border-gray-300 border p-2 focus:ring-gray-500 focus:border-gray-500"
                   required
@@ -188,6 +281,9 @@ const ContactSection = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
+                    name="subscribeNewsletter"
+                    checked={formData.subscribeNewsletter}
+                    onChange={handleChange}
                     className="h-4 w-4 text-gray-900 focus:ring-gray-500 border-gray-300 rounded"
                   />
                   <span className="ml-2 text-sm text-gray-600">
@@ -200,9 +296,17 @@ const ContactSection = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full bg-gray-900 text-white py-3 px-4 hover:bg-gray-800 transition-colors duration-300"
+                disabled={isSubmitting}
+                className={`w-full py-3 px-4 transition-colors duration-300 flex items-center justify-center space-x-2 ${
+                  isSubmitting
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gray-900 hover:bg-gray-800'
+                } text-white`}
               >
-                SEND MESSAGE
+                {isSubmitting && (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                )}
+                <span>{isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}</span>
               </motion.button>
             </form>
           </motion.div>

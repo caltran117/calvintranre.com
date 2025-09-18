@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Home from './pages/Home/Home';
 import Properties from './pages/Properties/Properties';
 import Newsletter from './pages/Newsletter/Newsletter';
+import Contact from './pages/Contact/Contact';
 import LocationStats from './pages/LocationStats/LocationStats';
 import ApiStatus from './pages/ApiStatus/ApiStatus';
 import Sidebar from './components/Sidebar/Sidebar';
@@ -77,6 +78,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/properties" element={<Properties />} />
                 <Route path="/newsletter" element={<Newsletter />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/location-stats" element={<LocationStats />} />
                 <Route path="/api-status" element={<ApiStatus />} />
                 <Route path="*" element={<Navigate to="/" replace />} />

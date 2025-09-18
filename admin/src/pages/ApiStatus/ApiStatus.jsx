@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  Database, 
-  Globe, 
-  Activity, 
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  Database,
+  Globe,
+  Activity,
   Server,
   Shield,
   Building,
@@ -15,7 +15,8 @@ import {
   MapPin,
   Home,
   RefreshCw,
-  BarChart
+  BarChart,
+  MessageSquare
 } from 'lucide-react';
 import { healthAPI } from '../../utils/api';
 
@@ -109,6 +110,24 @@ const ApiStatus = () => {
         'DELETE /newsletter/admin/subscribers/:id - Delete Subscriber (Admin)',
         'POST /newsletter/admin/send-bulk - Send Bulk Email (Admin)',
         'GET /newsletter/admin/stats - Get Newsletter Stats (Admin)'
+      ]
+    },
+    {
+      id: 'contact',
+      name: 'Contact Service',
+      description: 'Contact form and customer inquiries',
+      icon: MessageSquare,
+      endpoint: healthAPI.checkContactSelf,
+      color: 'from-indigo-500 to-indigo-600',
+      endpoints: [
+        'GET /contact/self - Service Self-Check',
+        'POST /contact - Submit Contact Form',
+        'GET /contact/user - Get User Contacts',
+        'GET /contact/admin/all - Get All Contacts (Admin)',
+        'GET /contact/admin/stats - Get Contact Stats (Admin)',
+        'GET /contact/admin/:id - Get Contact By ID (Admin)',
+        'PUT /contact/admin/:id - Update Contact (Admin)',
+        'DELETE /contact/admin/:id - Delete Contact (Admin)'
       ]
     },
     {

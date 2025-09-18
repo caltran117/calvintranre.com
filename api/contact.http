@@ -1,0 +1,92 @@
+# Contact API Routes - Test file
+@baseURL = http://localhost:8000/api/v1
+@authToken = your_jwt_token_here
+
+### Health Check
+GET {{baseURL}}/contact/self
+
+### Submit Contact Form (Authenticated User)
+POST {{baseURL}}/contact
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phone": "+1234567890",
+  "interest": "buying",
+  "message": "I'm interested in luxury properties in Beverly Hills area. Looking for 3-4 bedroom homes with a budget around $2M.",
+  "subscribeNewsletter": true
+}
+
+### Get User's Own Contacts
+GET {{baseURL}}/contact/user?page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### Admin: Get All Contacts
+GET {{baseURL}}/contact/admin/all?page=1&limit=10&status=new
+Authorization: Bearer {{authToken}}
+
+### Admin: Get All Contacts with Search
+GET {{baseURL}}/contact/admin/all?search=john&interest=buying
+Authorization: Bearer {{authToken}}
+
+### Admin: Get Contact Statistics
+GET {{baseURL}}/contact/admin/stats
+Authorization: Bearer {{authToken}}
+
+### Admin: Get Contact By ID
+GET {{baseURL}}/contact/admin/65f1b2c3d4e5f6789012345a
+Authorization: Bearer {{authToken}}
+
+### Admin: Update Contact Status
+PUT {{baseURL}}/contact/admin/65f1b2c3d4e5f6789012345a
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "replied",
+  "adminNotes": "Replied via email with property listings in Beverly Hills."
+}
+
+### Admin: Close Contact
+PUT {{baseURL}}/contact/admin/65f1b2c3d4e5f6789012345a
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "closed",
+  "adminNotes": "Client found suitable property through agent referral."
+}
+
+### Admin: Delete Contact
+DELETE {{baseURL}}/contact/admin/65f1b2c3d4e5f6789012345a
+Authorization: Bearer {{authToken}}
+
+### Test Contact Form Submission with All Fields
+POST {{baseURL}}/contact
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "firstName": "Sarah",
+  "lastName": "Johnson",
+  "email": "sarah.johnson@example.com",
+  "phone": "+1987654321",
+  "interest": "selling",
+  "message": "I need to sell my property at 123 Main St. It's a 4BR/3BA house built in 2010. Looking for a quick sale within 60 days.",
+  "subscribeNewsletter": false
+}
+
+### Test Contact Form Submission (Minimal Required Fields)
+POST {{baseURL}}/contact
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "firstName": "Mike",
+  "lastName": "Wilson",
+  "email": "mike.wilson@example.com",
+  "message": "Interested in investment properties. Please contact me."
+}

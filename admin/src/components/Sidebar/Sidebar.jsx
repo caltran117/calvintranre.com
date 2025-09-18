@@ -2,16 +2,17 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  LayoutDashboard, 
-  Building, 
-  Menu, 
+import {
+  LayoutDashboard,
+  Building,
+  Menu,
   X,
   LogOut,
   User,
   Activity,
   Mail,
-  MapPin
+  MapPin,
+  MessageSquare
 } from "lucide-react";
 
 const Sidebar = ({ user, onLogout }) => {
@@ -52,6 +53,12 @@ const Sidebar = ({ user, onLogout }) => {
       label: "Newsletter",
       href: "/newsletter",
       active: location.pathname === "/newsletter",
+    },
+    {
+      icon: MessageSquare,
+      label: "Contact",
+      href: "/contact",
+      active: location.pathname === "/contact",
     },
     {
       icon: MapPin,
