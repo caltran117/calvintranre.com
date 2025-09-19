@@ -64,13 +64,20 @@ export const adminUpdateUserSchema = z.object({
 export const addFavoritePropertySchema = z.object({
   propertyId: z
     .string()
-    .regex(/^[0-9a-fA-F]{24}$/, "Invalid property ID format")
+    .min(1, "Property ID is required"),
+  propertyType: z
+    .enum(["database", "simplyrets"], "Property type must be either 'database' or 'simplyrets'"),
+  propertyData: z
+    .object({}, "Property data is required")
+    .passthrough()
 });
 
 export const removeFavoritePropertySchema = z.object({
   propertyId: z
     .string()
-    .regex(/^[0-9a-fA-F]{24}$/, "Invalid property ID format")
+    .min(1, "Property ID is required"),
+  propertyType: z
+    .enum(["database", "simplyrets"], "Property type must be either 'database' or 'simplyrets'")
 });
 
 export const getUsersQuerySchema = z.object({

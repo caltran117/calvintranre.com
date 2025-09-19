@@ -3,6 +3,7 @@ import httpError from "../../util/httpError.js";
 import httpResponse from "../../util/httpResponse.js";
 import quicker from "../../util/quicker.js";
 import userModel from "../../models/user.model.js";
+import propertyModel from "../../models/property.model.js";
 import config from "../../config/config.js";
 import { EApplicationEnvironment } from "../../constant/application.js";
 import dayjs from "dayjs";
@@ -245,6 +246,109 @@ export default {
             }
 
             httpResponse(req, res, 200, responseMessage.DELETED, user);
+        } catch (err) {
+            httpError(next, err, req, 500);
+        }
+    },
+
+    addFavorite: async (req, res, next) => {
+        try {
+            const userId = req.authenticatedUser?._id;
+            if (!userId) {
+                return httpError(next, responseMessage.AUTH.UNAUTHORIZED, req, 401);
+            }
+
+            const { propertyId, propertyType, propertyData } = req.body;
+
+            // Validate database property exists if it's a database property
+            if (propertyType === 'database') {
+                const property = await propertyModel.findById(propertyId);
+                if (!property) {
+                    return httpError(next, responseMessage.ERROR.NOT_FOUND('Property'), req, 404);
+                }
+            }
+
+            const user = await userModel.findById(userId);
+            if (!user) {
+                return httpError(next, responseMessage.ERROR.NOT_FOUND('User'), req, 404);
+            }
+
+            // Check if property is already in favorites
+            const existingFavorite = user.favorites.find(
+                fav => fav.propertyId === propertyId && fav.propertyType === propertyType
+            );
+
+            if (existingFavorite) {
+                return httpError(next, responseMessage.ERROR.ALREADY_EXISTS('Favorite'), req, 409);
+            }
+
+            // Add to favorites
+            user.favorites.push({
+                propertyId,
+                propertyType,
+                propertyData
+            });
+
+            await user.save();
+
+            httpResponse(req, res, 201, responseMessage.CREATED, {
+                message: 'Property added to favorites successfully',
+                favorite: user.favorites[user.favorites.length - 1]
+            });
+        } catch (err) {
+            httpError(next, err, req, 500);
+        }
+    },
+
+    removeFavorite: async (req, res, next) => {
+        try {
+            const userId = req.authenticatedUser?._id;
+            if (!userId) {
+                return httpError(next, responseMessage.AUTH.UNAUTHORIZED, req, 401);
+            }
+
+            const { propertyId, propertyType } = req.body;
+
+            const user = await userModel.findById(userId);
+            if (!user) {
+                return httpError(next, responseMessage.ERROR.NOT_FOUND('User'), req, 404);
+            }
+
+            // Find and remove the favorite
+            const favoriteIndex = user.favorites.findIndex(
+                fav => fav.propertyId === propertyId && fav.propertyType === propertyType
+            );
+
+            if (favoriteIndex === -1) {
+                return httpError(next, responseMessage.ERROR.NOT_FOUND('Favorite'), req, 404);
+            }
+
+            user.favorites.splice(favoriteIndex, 1);
+            await user.save();
+
+            httpResponse(req, res, 200, responseMessage.DELETED, {
+                message: 'Property removed from favorites successfully'
+            });
+        } catch (err) {
+            httpError(next, err, req, 500);
+        }
+    },
+
+    getFavorites: async (req, res, next) => {
+        try {
+            const userId = req.authenticatedUser?._id;
+            if (!userId) {
+                return httpError(next, responseMessage.AUTH.UNAUTHORIZED, req, 401);
+            }
+
+            const user = await userModel.findById(userId);
+            if (!user) {
+                return httpError(next, responseMessage.ERROR.NOT_FOUND('User'), req, 404);
+            }
+
+            httpResponse(req, res, 200, responseMessage.SUCCESS, {
+                favorites: user.favorites
+            });
         } catch (err) {
             httpError(next, err, req, 500);
         }
