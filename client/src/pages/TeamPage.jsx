@@ -21,7 +21,7 @@ const TeamPage = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            MEET THE UMANSKY TEAM
+Meet the Calvin Tran RE Team
           </motion.h1>
           <motion.p
             className="max-w-2xl mx-auto text-gray-600"
@@ -29,8 +29,7 @@ const TeamPage = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            Our award-winning agents are experts in LA’s luxury market and committed to delivering top-tier service, local insight, and extraordinary results.
-          </motion.p>
+Our team is turn-key and built to handle and streamline all your real estate needs. With deep expertise in the Greater Philadelphia market, we offer a seamless experience from start to finish—delivering top-tier service, local insight, and exceptional results every step of the way.          </motion.p>
         </div>
       </motion.section>
 

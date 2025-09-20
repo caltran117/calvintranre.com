@@ -112,7 +112,7 @@ const ContactSection = () => {
                 </svg>
                 <div>
                   <h3 className="font-medium text-gray-900">Direct Cell</h3>
-                  <p className="text-gray-600">(484) 800-6722 Call/Text/24/7</p>
+                  <p className="text-gray-600">(610) 890-8889 Call/Text/24/7</p>
                 </div>
               </div>
 

@@ -75,8 +75,7 @@ const TeamSection = () => {
         >
           <h2 className="text-3xl font-light mb-4">OUR EXPERT TEAM</h2>
           <p className="max-w-2xl mx-auto text-gray-600">
-            Meet the professionals behind LA's leading luxury real estate team. Our agents combine extensive market knowledge with personalized service.
-          </p>
+          Get to know the professionals behind the Calvin Tran RE Team. With unmatched market insight and a personalized approach, each agent is dedicated to making your real estate journey in Greater Philadelphia smooth, strategic, and successful.          </p>
         </motion.div>
 
         <motion.div 
