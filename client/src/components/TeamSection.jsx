@@ -8,38 +8,38 @@ const TeamSection = () => {
   const teamMembers = [
     {
       id: 1,
-      name: "Team Member",
-      role: "Agent",
+      name: "Calvin Tran",
+      role: "Luxury Concierge Specialist",
       image: "/images/team-member-1.jpg"
     },
     {
       id: 2,
-      name: "Team Member",
-      role: "Agent",
+      name: "Suzy Hoyle",
+      role: "Brokerage Manager",
       image: "/images/team-member-2.jpg"
     },
     {
       id: 3,
-      name: "Team Member",
-      role: "Agent",
+      name: "Will",
+      role: "Mortgage Expert",
       image: "/images/team-member-3.jpg"
     },
     {
       id: 4,
-      name: "Team Member",
-      role: "Agent",
+      name: "Nicole",
+      role: "Transaction Coordinator",
       image: "/images/team-member-4.jpg"
     },
     {
       id: 5,
-      name: "Team Member",
-      role: "Agent",
+      name: "Jennifer",
+      role: "Title and Insurance",
       image: "/images/team-member-5.jpg"
     },
     {
       id: 6,
-      name: "Team Member",
-      role: "Agent",
+      name: "Alejandra",
+      role: "Assistant",
       image: "/images/team-member-6.jpg"
     }
   ];
