@@ -6,22 +6,22 @@ const TestimonialsSection = () => {
   const testimonials = [
     {
       id: 1,
-      text: "Working with The Umansky Team was an exceptional experience. Their knowledge of the Los Angeles luxury market is unparalleled, and they guided us through every step of the process with professionalism and care.",
-      author: "Sarah & Michael Johnson",
-      location: "Beverly Hills"
+      text: "Calvin was a great realtor and I highly recommend him. He was able to work with my family and me, answering my questions quickly and in timely manner. He was able provide all the necessary documents to me and completed the sale within a month after finding a buyer!",
+      author: "Seller- Alexander Ho",
+      location: "Philadelphia"
     },
-    {
-      id: 2,
-      text: "The Umansky Team's marketing strategy for our property was innovative and effective. They managed to secure multiple offers within days, ultimately selling our home well above asking price.",
-      author: "Robert Chen",
-      location: "Bel Air"
-    },
-    {
-      id: 3,
-      text: "As first-time buyers in a competitive market, we needed agents who could educate us while advocating fiercely on our behalf. The Umansky Team delivered on both counts, helping us find and secure our dream home.",
-      author: "Emily & David Thompson",
-      location: "Hollywood Hills"
-    }
+    // {
+    //   id: 2,
+    //   text: "Calvin Tran RE Team's marketing strategy for our property was innovative and effective. They managed to secure multiple offers within days, ultimately selling our home well above asking price.",
+    //   author: "Robert Chen",
+    //   location: "Bel Air"
+    // },
+    // {
+    //   id: 3,
+    //   text: "As first-time buyers in a competitive market, we needed agents who could educate us while advocating fiercely on our behalf. The Umansky Team delivered on both counts, helping us find and secure our dream home.",
+    //   author: "Emily & David Thompson",
+    //   location: "Hollywood Hills"
+    // }
   ];
 
   const [current, setCurrent] = useState(0);

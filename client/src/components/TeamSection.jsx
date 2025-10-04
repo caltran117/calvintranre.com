@@ -10,7 +10,7 @@ const TeamSection = () => {
       id: 1,
       name: "Calvin Tran",
       role: "Luxury Concierge Specialist",
-      image: "/images/team-member-1.jpg"
+      image: "/public/images/profilepic.png"
     },
     {
       id: 2,
@@ -98,7 +98,7 @@ const TeamSection = () => {
                     alt={member.name}
                     className="w-full h-96 object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                  <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-80 transition-opacity duration-300 flex items-end">
                     <div className="p-6 w-full bg-white bg-opacity-90">
                       <h3 className="text-xl font-medium">{member.name}</h3>
                       <p className="text-gray-600">{member.role}</p>
