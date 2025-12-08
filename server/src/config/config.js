@@ -39,6 +39,13 @@ const config = {
         rateLimitMax: process.env.RATE_LIMIT_MAX || 100,
         rateLimitWindowMs: process.env.RATE_LIMIT_WINDOW_MS || 900000 // 15 minutes
     },
+    salesforce: {
+        tokenUrl: process.env.SALESFORCE_TOKEN_URL,
+        clientId: process.env.SALESFORCE_CLIENT_ID,
+        clientSecret: process.env.SALESFORCE_CLIENT_SECRET,
+        apiVersion: process.env.SALESFORCE_API_VERSION || 'v61.0',
+        campaignId: process.env.SALESFORCE_CAMPAIGN_ID
+    },
 }
 
 export default config

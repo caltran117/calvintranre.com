@@ -3,6 +3,7 @@ import httpError from "../../util/httpError.js";
 import httpResponse from "../../util/httpResponse.js";
 import contactModel from "../../models/contact.model.js";
 import newsletterModel from "../../models/newsletter.model.js";
+import salesforceService from "../../service/salesforce.service.js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 
@@ -34,9 +35,24 @@ export default {
                 userId
             };
 
+            // Save to database
             const contact = new contactModel(contactData);
             await contact.save();
 
+            // Send to Salesforce (non-blocking)
+            salesforceService.createLead(contactData)
+                .then(result => {
+                    if (result.success) {
+                        console.log('Salesforce Lead created successfully:', result.leadId);
+                    } else {
+                        console.error('Failed to create Salesforce Lead:', result.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Salesforce Lead creation error:', error);
+                });
+
+            // Handle newsletter subscription
             if (subscribeNewsletter) {
                 try {
                     const existingSubscription = await newsletterModel.findOne({ email });
@@ -50,6 +66,20 @@ export default {
                         const newsletter = new newsletterModel(newsletterData);
                         await newsletter.save();
                     }
+
+                    // Also send to Salesforce (non-blocking)
+                    salesforceService.processNewsletterSubscription({
+                        firstName,
+                        email
+                    }).then(result => {
+                        if (result.success) {
+                            console.log('Salesforce newsletter subscription processed:', result);
+                        } else {
+                            console.error('Failed to process Salesforce newsletter subscription:', result.error);
+                        }
+                    }).catch(error => {
+                        console.error('Salesforce newsletter subscription error:', error);
+                    });
                 } catch (newsletterError) {
                     console.error('Newsletter subscription error:', newsletterError);
                 }

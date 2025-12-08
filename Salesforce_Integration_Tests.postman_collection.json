@@ -1,0 +1,321 @@
+{
+	"info": {
+		"_postman_id": "sf-integration-001",
+		"name": "Salesforce Integration - Calvin Tran Real Estate",
+		"description": "Test collection for Salesforce Lead and Contact integration.\n\nBefore running:\n1. Set up environment variables in Postman\n2. Add your Salesforce credentials (CLIENT_ID and CLIENT_SECRET)\n3. Run \"Get Access Token\" first to authenticate\n4. The access token will be automatically saved for subsequent requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Get Access Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Save access token and instance URL to environment",
+							"if (pm.response.code === 200) {",
+							"    const jsonData = pm.response.json();",
+							"    pm.environment.set(\"ACCESS_TOKEN\", jsonData.access_token);",
+							"    pm.environment.set(\"INSTANCE_URL\", jsonData.instance_url);",
+							"    console.log(\"Access token saved:\", jsonData.access_token);",
+							"    console.log(\"Instance URL saved:\", jsonData.instance_url);",
+							"} else {",
+							"    console.error(\"Failed to get access token\");",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{CLIENT_ID}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{CLIENT_SECRET}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{TOKEN_URL}}",
+					"host": [
+						"{{TOKEN_URL}}"
+					]
+				},
+				"description": "Authenticate with Salesforce using OAuth 2.0 Client Credentials flow.\n\nThis request will save the access_token and instance_url to environment variables for use in subsequent requests."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Create Lead",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that Lead was created successfully",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Response has Lead ID\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.exist;",
+							"    pm.expect(jsonData.success).to.be.true;",
+							"    console.log(\"Lead created with ID:\", jsonData.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"John\",\n  \"LastName\": \"Doe\",\n  \"Email\": \"john.doe@example.com\",\n  \"Phone\": \"424-555-0123\",\n  \"Company\": \"Website\",\n  \"LeadSource\": \"Web - Website Contact Form\",\n  \"Description\": \"I'm interested in buying a property in Beverly Hills. Looking for 3-4 bedrooms.\",\n  \"Opportunity_Type__c\": \"Buyer\",\n  \"Has_Opted_In_Newsletter__c\": true\n}"
+				},
+				"url": {
+					"raw": "{{INSTANCE_URL}}/services/data/{{API_VERSION}}/sobjects/Lead",
+					"host": [
+						"{{INSTANCE_URL}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"{{API_VERSION}}",
+						"sobjects",
+						"Lead"
+					]
+				},
+				"description": "Create a new Lead in Salesforce from website contact form.\n\nOpportunity_Type__c values:\n- Buyer\n- Seller\n- Renter\n- Landlord"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Upsert Contact (Newsletter)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Save Contact ID for campaign member request",
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							"",
+							"pm.test(\"Response has Contact ID\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.exist;",
+							"    pm.environment.set(\"CONTACT_ID\", jsonData.id);",
+							"    console.log(\"Contact ID saved:\", jsonData.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Jane\",\n  \"Email\": \"jane.smith@example.com\",\n  \"Newsletter_Subscriber__c\": true,\n  \"LeadSource\": \"Newsletter\",\n  \"Subscriber_Key__c\": \"jane.smith@example.com\"\n}"
+				},
+				"url": {
+					"raw": "{{INSTANCE_URL}}/services/data/{{API_VERSION}}/sobjects/Contact/Subscriber_Key__c/jane.smith@example.com",
+					"host": [
+						"{{INSTANCE_URL}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"{{API_VERSION}}",
+						"sobjects",
+						"Contact",
+						"Subscriber_Key__c",
+						"jane.smith@example.com"
+					]
+				},
+				"description": "Upsert a Contact for newsletter subscription.\n\nThis uses Subscriber_Key__c (lowercase email) as the external ID.\nIf the contact exists, it updates; if not, it creates a new one."
+			},
+			"response": []
+		},
+		{
+			"name": "4. Get Contact by Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Save Contact ID from query",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contact found\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.records).to.be.an('array');",
+							"    if (jsonData.records.length > 0) {",
+							"        pm.environment.set(\"CONTACT_ID\", jsonData.records[0].Id);",
+							"        console.log(\"Contact ID saved:\", jsonData.records[0].Id);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{INSTANCE_URL}}/services/data/{{API_VERSION}}/query?q=SELECT+Id+FROM+Contact+WHERE+Subscriber_Key__c='jane.smith@example.com'+LIMIT+1",
+					"host": [
+						"{{INSTANCE_URL}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"{{API_VERSION}}",
+						"query"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "SELECT+Id+FROM+Contact+WHERE+Subscriber_Key__c='jane.smith@example.com'+LIMIT+1"
+						}
+					]
+				},
+				"description": "Query to find Contact ID by Subscriber_Key__c (email).\n\nThis is needed before adding the contact to a campaign."
+			},
+			"response": []
+		},
+		{
+			"name": "5. Add Contact to Campaign",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 or duplicate error\", function () {",
+							"    // 201 = created, 400 = duplicate (already in campaign)",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+							"});",
+							"",
+							"if (pm.response.code === 201) {",
+							"    pm.test(\"Campaign Member created\", function () {",
+							"        const jsonData = pm.response.json();",
+							"        pm.expect(jsonData.id).to.exist;",
+							"        console.log(\"Campaign Member ID:\", jsonData.id);",
+							"    });",
+							"} else {",
+							"    console.log(\"Contact already in campaign\");",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Make sure we have a CONTACT_ID from previous request",
+							"if (!pm.environment.get(\"CONTACT_ID\")) {",
+							"    console.error(\"CONTACT_ID not found. Please run 'Get Contact by Email' first.\");",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"CampaignId\": \"{{CAMPAIGN_ID}}\",\n  \"ContactId\": \"{{CONTACT_ID}}\"\n}"
+				},
+				"url": {
+					"raw": "{{INSTANCE_URL}}/services/data/{{API_VERSION}}/sobjects/CampaignMember",
+					"host": [
+						"{{INSTANCE_URL}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"{{API_VERSION}}",
+						"sobjects",
+						"CampaignMember"
+					]
+				},
+				"description": "Add a Contact to the Newsletter Campaign.\n\nCampaign ID: 701Pg00001TaC81IAF (Real Estate Newsletter Subscribers)\n\nNote: If the contact is already in the campaign, you'll get a duplicate error which is normal."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "API_VERSION",
+			"value": "v61.0",
+			"type": "string"
+		}
+	]
+}

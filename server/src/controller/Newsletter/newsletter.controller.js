@@ -3,6 +3,7 @@ import httpError from "../../util/httpError.js";
 import httpResponse from "../../util/httpResponse.js";
 import quicker from "../../util/quicker.js";
 import newsletterModel from "../../models/newsletter.model.js";
+import salesforceService from "../../service/salesforce.service.js";
 import config from "../../config/config.js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
@@ -20,7 +21,7 @@ export default {
 
     subscribe: async (req, res, next) => {
         try {
-            const { email, consent } = req.body;
+            const { email, consent, firstName } = req.body;
 
             const existingSubscriber = await newsletterModel.findOne({ email });
 
@@ -28,7 +29,7 @@ export default {
                 if (existingSubscriber.isSubscribed) {
                     return httpError(next, responseMessage.ERROR.ALREADY_EXISTS('Subscriber'), req, 409);
                 }
-                
+
                 // Resubscribe existing user
                 existingSubscriber.isSubscribed = true;
                 existingSubscriber.consent = consent;
@@ -36,15 +37,44 @@ export default {
                 existingSubscriber.unsubscribedAt = null;
                 await existingSubscriber.save();
 
+                // Send to Salesforce (non-blocking)
+                salesforceService.processNewsletterSubscription({
+                    firstName: existingSubscriber.firstName || firstName || '',
+                    email
+                }).then(result => {
+                    if (result.success) {
+                        console.log('Salesforce newsletter subscription updated:', result);
+                    } else {
+                        console.error('Failed to update Salesforce newsletter subscription:', result.error);
+                    }
+                }).catch(error => {
+                    console.error('Salesforce newsletter subscription error:', error);
+                });
+
                 httpResponse(req, res, 200, responseMessage.UPDATED, existingSubscriber);
             } else {
                 // Create new subscriber
                 const newSubscriber = new newsletterModel({
                     email,
+                    firstName: firstName || '',
                     consent,
                     subscribedAt: dayjs().utc().toDate()
                 });
                 await newSubscriber.save();
+
+                // Send to Salesforce (non-blocking)
+                salesforceService.processNewsletterSubscription({
+                    firstName: firstName || '',
+                    email
+                }).then(result => {
+                    if (result.success) {
+                        console.log('Salesforce newsletter subscription processed:', result);
+                    } else {
+                        console.error('Failed to process Salesforce newsletter subscription:', result.error);
+                    }
+                }).catch(error => {
+                    console.error('Salesforce newsletter subscription error:', error);
+                });
 
                 httpResponse(req, res, 201, responseMessage.CREATED, newSubscriber);
             }
